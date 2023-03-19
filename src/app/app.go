@@ -2,8 +2,9 @@ package app
 
 import (
 	"context"
-	"main/src/adapter/repository"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"main/src/entrypoints"
+	"main/src/repo"
 	"main/src/services"
 	"net/http"
 )
@@ -12,9 +13,9 @@ type App struct {
 	AppMux *http.ServeMux
 }
 
-func NewApplication(ctx context.Context) (error, App) {
+func NewApplication(ctx context.Context, pool *pgxpool.Pool) (error, App) {
 
-	finRepo := repository.NewMemoryFinanceRepository()
+	finRepo := repo.NewPostgresFinanceRepository(pool)
 
 	finEntry := entrypoints.FinanceEntryPoint{
 		CreateSpendService: services.CreateCreateSpendsService(finRepo),

@@ -1,7 +1,9 @@
-package repository
+package repo
 
 import (
 	"context"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"log"
 	"main/src/models/finance"
 	"sync"
 )
@@ -52,6 +54,49 @@ func (mfr MemoryFinanceRepository) GetUserFinanceSpends(ctx context.Context, use
 	}
 
 	return nil, userSpends
+}
+
+type PostgresFinanceRepository struct {
+	pool *pgxpool.Pool
+
+	financeFactory finance.Factory
+}
+
+func NewPostgresFinanceRepository(pool *pgxpool.Pool) PostgresFinanceRepository {
+	return PostgresFinanceRepository{
+		pool:           pool,
+		financeFactory: finance.FactoryImp{},
+	}
+}
+
+func (pfr PostgresFinanceRepository) CreateFinanceSpending(ctx context.Context, userId int, name string) error {
+	_, err := pfr.pool.Exec(ctx, "INSERT INTO spends(name, type, user_id) values ($1, $2, $3)", name, "test", userId)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (pfr PostgresFinanceRepository) GetUserFinanceSpends(ctx context.Context, userId int) (error, []finance.Spending) {
+	spends := make([]finance.Spending, 0, 30)
+
+	rows, err := pfr.pool.Query(ctx, "SELECT name, type FROM spends WHERE user_id=$1", userId)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for rows.Next() {
+		var sp finance.Spending
+		sp.UserId = userId
+		err = rows.Scan(&sp.Name, &sp.Type)
+		spends = append(spends, sp)
+	}
+
+	return nil, spends
+}
+
+func (pfr PostgresFinanceRepository) DeleteFinanceSpending(ctx context.Context, userId int, id int) error {
+	return nil
 }
 
 type FinanceRepository interface {
