@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/jackc/pgx/v5/pgxpool"
 	application "main/src/app"
 	"net/http"
 )
@@ -10,7 +11,8 @@ func main() {
 
 	ctx := context.Background()
 
-	err, app := application.NewApplication(ctx)
+	pool, err := pgxpool.New(ctx, "postgresql://postgres:postgres@localhost:5432/postgres")
+	err, app := application.NewApplication(ctx, pool)
 
 	if err != nil {
 		return

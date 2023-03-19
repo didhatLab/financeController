@@ -2,16 +2,16 @@ package services
 
 import (
 	"context"
-	"main/src/adapter/repository"
 	"main/src/models/finance"
 	"main/src/models/user"
+	"main/src/repo"
 )
 
 type CreateSpendService struct {
-	repository repository.FinanceRepository
+	repository repo.FinanceRepository
 }
 
-func CreateCreateSpendsService(repo repository.FinanceRepository) CreateSpendService {
+func CreateCreateSpendsService(repo repo.FinanceRepository) CreateSpendService {
 	return CreateSpendService{repository: repo}
 }
 
@@ -25,10 +25,10 @@ func (cs CreateSpendService) CreateNewSpend(ctx context.Context, user user.User,
 }
 
 type GetSpendsService struct {
-	repository repository.FinanceRepository
+	repository repo.FinanceRepository
 }
 
-func CreateGetSpendsService(repo repository.FinanceRepository) GetSpendsService {
+func CreateGetSpendsService(repo repo.FinanceRepository) GetSpendsService {
 	return GetSpendsService{repository: repo}
 }
 
@@ -41,4 +41,3 @@ func (gs GetSpendsService) GetUserSpends(ctx context.Context, user user.User) (e
 
 	return nil, spends
 }
-
