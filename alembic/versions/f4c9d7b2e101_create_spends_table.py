@@ -20,7 +20,7 @@ def upgrade() -> None:
     op.create_table(
         "spend",
         sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
-        sa.Column("name", sa.Integer),
+        sa.Column("name", sa.String),
         sa.Column("type", sa.String, default="unknown"),
         sa.Column("user_id", sa.Integer),
         sa.Column("amount", sa.Integer),

@@ -3,26 +3,27 @@ package entrypoints
 import (
 	"context"
 	"main/src/entrypoints/webmodels"
+	"main/src/models/finance"
 	"main/src/models/user"
-	"main/src/services/interfaces"
+	"main/src/services"
 	"net/http"
 )
 
 type FinanceEntryPoint struct {
-	CreateSpendService interfaces.CreatingSpendService
-	GetSpendsService   interfaces.GettingUserSpendsService
+	CreateSpendService services.CreatingSpendService
+	GetSpendsService   services.GettingUserSpendsService
 
 	Ctx context.Context
 }
 
 func (fe FinanceEntryPoint) FinanceEntrypoint() *http.ServeMux {
-	finance := http.NewServeMux()
+	financeMux := http.NewServeMux()
 
 	spending := fe.spendingEntrypoint()
 
-	finance.Handle("/", http.StripPrefix("/spending", spending))
+	financeMux.Handle("/", http.StripPrefix("/spending", spending))
 
-	return finance
+	return financeMux
 }
 
 func (fe FinanceEntryPoint) spendingEntrypoint() *http.ServeMux {
@@ -45,7 +46,8 @@ func (fe FinanceEntryPoint) saveNewSpending(w http.ResponseWriter, req *http.Req
 		return
 	}
 	mockUser := user.User{UserId: 1, Username: "dan"}
-	err = fe.CreateSpendService.CreateNewSpend(fe.Ctx, mockUser, newSpending.Name)
+	err = fe.CreateSpendService.CreateNewSpend(fe.Ctx, mockUser,
+		finance.SpendingFromUserInput(newSpending, mockUser.UserId))
 
 	if err != nil {
 		return

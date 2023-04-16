@@ -1,4 +1,4 @@
-package interfaces
+package services
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 )
 
 type CreatingSpendService interface {
-	CreateNewSpend(ctx context.Context, user user.User, spendName string) error
+	CreateNewSpend(ctx context.Context, user user.User, spending finance.Spending) error
 }
 
 type GettingUserSpendsService interface {

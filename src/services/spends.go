@@ -15,8 +15,8 @@ func CreateCreateSpendsService(repo repo.FinanceRepository) CreateSpendService {
 	return CreateSpendService{repository: repo}
 }
 
-func (cs CreateSpendService) CreateNewSpend(ctx context.Context, user user.User, spendName string) error {
-	err := cs.repository.CreateFinanceSpending(ctx, user.UserId, spendName)
+func (cs CreateSpendService) CreateNewSpend(ctx context.Context, user user.User, spending finance.Spending) error {
+	err := cs.repository.CreateFinanceSpending(ctx, user.UserId, spending)
 
 	if err != nil {
 		return err
