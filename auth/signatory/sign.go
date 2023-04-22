@@ -16,7 +16,7 @@ func NewSignService(secretKey []byte) SignService {
 
 func (ss SignService) SignToken(userId int) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id": userId,
+		"data": map[string]int{"id": userId},
 	})
 
 	tokenString, err := token.SignedString([]byte(ss.secretKey))

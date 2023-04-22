@@ -2,9 +2,9 @@ package entrypoints
 
 import (
 	"context"
+	"main/finances/entrypoints/middleware"
 	"main/finances/entrypoints/webmodels"
 	"main/finances/models/finance"
-	"main/finances/models/user"
 	"main/finances/services"
 	"net/http"
 )
@@ -28,8 +28,9 @@ func (fe FinanceEntryPoint) FinanceEntrypoint() *http.ServeMux {
 
 func (fe FinanceEntryPoint) spendingEntrypoint() *http.ServeMux {
 	spending := http.NewServeMux()
-	spending.HandleFunc("/save", fe.saveNewSpending)
-	spending.HandleFunc("/get", fe.getUserSpends)
+
+	spending.Handle("/save", middleware.AuthMiddleware(http.HandlerFunc(fe.saveNewSpending)))
+	spending.Handle("/get", middleware.AuthMiddleware(http.HandlerFunc(fe.getUserSpends)))
 
 	return spending
 }
@@ -38,13 +39,19 @@ func (fe FinanceEntryPoint) saveNewSpending(w http.ResponseWriter, req *http.Req
 	var newSpending webmodels.TestSpending
 	err := webmodels.DecodeJSONBody(w, req, &newSpending)
 
+	ctx := req.Context()
+	realUser, ok := middleware.UserFromContext(ctx)
+	if !ok {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 	if err != nil {
 		webmodels.EncodeJSONResponseBody(w, http.StatusBadRequest, struct{ Err string }{Err: err.Error()})
 		return
 	}
-	mockUser := user.User{UserId: 1, Username: "dan"}
-	err = fe.CreateSpendService.CreateNewSpend(fe.Ctx, mockUser,
-		finance.SpendingFromUserInput(newSpending, mockUser.UserId))
+	err = fe.CreateSpendService.CreateNewSpend(fe.Ctx, realUser,
+		finance.SpendingFromUserInput(newSpending, realUser.UserId))
 
 	if err != nil {
 		return
@@ -55,9 +62,14 @@ func (fe FinanceEntryPoint) saveNewSpending(w http.ResponseWriter, req *http.Req
 }
 
 func (fe FinanceEntryPoint) getUserSpends(w http.ResponseWriter, req *http.Request) {
-	mockUser := user.User{UserId: 1, Username: "dan"}
+	ctx := req.Context()
+	realUser, ok := middleware.UserFromContext(ctx)
+	if !ok {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
 
-	err, spends := fe.GetSpendsService.GetUserSpends(fe.Ctx, mockUser)
+	err, spends := fe.GetSpendsService.GetUserSpends(fe.Ctx, realUser)
 
 	if err != nil {
 		webmodels.EncodeJSONResponseBody(w, http.StatusInternalServerError, struct{}{})
