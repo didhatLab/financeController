@@ -2,9 +2,9 @@ package services
 
 import (
 	"context"
-	"main/src/models/finance"
-	"main/src/models/user"
-	"main/src/repo"
+	"main/finances/models/finance"
+	"main/finances/models/user"
+	"main/finances/repo"
 )
 
 type CreateSpendService struct {

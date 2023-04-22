@@ -1,6 +1,6 @@
 package finance
 
-import "main/src/entrypoints/webmodels"
+import "main/finances/entrypoints/webmodels"
 
 type Spending struct {
 	UserId   int

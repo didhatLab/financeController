@@ -4,7 +4,7 @@ import (
 	"context"
 	"main/auth/entrypoints/webmodels"
 	"main/auth/services"
-	decoder "main/src/entrypoints/webmodels"
+	decoder "main/finances/entrypoints/webmodels"
 	"net/http"
 )
 

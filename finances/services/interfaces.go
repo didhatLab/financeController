@@ -2,8 +2,8 @@ package services
 
 import (
 	"context"
-	"main/src/models/finance"
-	"main/src/models/user"
+	"main/finances/models/finance"
+	"main/finances/models/user"
 )
 
 type CreatingSpendService interface {

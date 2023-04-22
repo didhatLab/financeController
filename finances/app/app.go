@@ -3,9 +3,9 @@ package app
 import (
 	"context"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"main/src/entrypoints"
-	"main/src/repo"
-	"main/src/services"
+	"main/finances/entrypoints"
+	"main/finances/repo"
+	"main/finances/services"
 	"net/http"
 )
 
