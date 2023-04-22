@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"github.com/jackc/pgx/v5/pgxpool"
-	application "main/src/app"
+	application "main/finances/app"
 	"net/http"
 )
 

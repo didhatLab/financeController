@@ -2,10 +2,10 @@ package entrypoints
 
 import (
 	"context"
-	"main/src/entrypoints/webmodels"
-	"main/src/models/finance"
-	"main/src/models/user"
-	"main/src/services"
+	"main/finances/entrypoints/webmodels"
+	"main/finances/models/finance"
+	"main/finances/models/user"
+	"main/finances/services"
 	"net/http"
 )
 

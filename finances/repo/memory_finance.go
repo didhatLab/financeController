@@ -2,7 +2,7 @@ package repo
 
 import (
 	"context"
-	"main/src/models/finance"
+	"main/finances/models/finance"
 	"sync"
 )
 

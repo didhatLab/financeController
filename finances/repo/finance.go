@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"log"
-	"main/src/models/finance"
+	"main/finances/models/finance"
 )
 
 type PostgresFinanceRepository struct {
