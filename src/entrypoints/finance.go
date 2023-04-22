@@ -40,9 +40,6 @@ func (fe FinanceEntryPoint) saveNewSpending(w http.ResponseWriter, req *http.Req
 
 	if err != nil {
 		webmodels.EncodeJSONResponseBody(w, http.StatusBadRequest, struct{ Err string }{Err: err.Error()})
-		if err != nil {
-			return
-		}
 		return
 	}
 	mockUser := user.User{UserId: 1, Username: "dan"}
