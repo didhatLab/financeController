@@ -1,14 +1,17 @@
 package user
 
 type User struct {
-	UserId   int
-	Username string
+	UserId int
+}
+
+func NewUser(userId int) User {
+	return User{UserId: userId}
 }
 
 type FactoryImp struct{}
 
 func (f FactoryImp) CreateUser(userId int, username string) User {
-	return User{UserId: userId, Username: username}
+	return User{UserId: userId}
 }
 
 type Factory interface {
