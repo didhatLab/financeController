@@ -11,6 +11,6 @@ class CurrentCurrencyRatesRepositoryImp:
         self._redis_key_for_rate = currency_rate_key
 
     async def save_new_rate(self, rate: CurrencyRate) -> Any:
-        rates_json = json.loads(rate.to_dict())
+        rates_json = json.dumps(rate.to_dict())
 
         await self._redis.set(self._redis_key_for_rate, rates_json)

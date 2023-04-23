@@ -40,3 +40,6 @@ def convert_currency(value: str, _):
 
 converter.register_structure_hook(Union[str, Currency], convert_currency)
 converter.register_structure_hook(Union[float, int], lambda value, _: value)
+
+converter.register_unstructure_hook(Union[str, Currency], lambda val: str(val))
+converter.register_unstructure_hook(Currency, lambda val: str(val))
