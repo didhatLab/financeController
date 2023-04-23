@@ -1,1 +1,1 @@
-pytest_plugins = ["tests.adapter.mongo"]
+pytest_plugins = ["tests.adapter.mongo", "tests.adapter.redis"]
