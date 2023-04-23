@@ -1,5 +1,6 @@
 import attr
 import cattr
+import cattrs
 import enum
 
 from typing import AnyStr, Union
@@ -27,5 +28,15 @@ class CurrencyRate:
 
 converter = cattr.Converter()
 
-converter.register_structure_hook(Union[str, Currency], lambda value, _: value)
+
+def convert_currency(value: str, _):
+    try:
+        curr = cattr.structure(value, Currency)
+    except ValueError:
+        return value
+
+    return curr
+
+
+converter.register_structure_hook(Union[str, Currency], convert_currency)
 converter.register_structure_hook(Union[float, int], lambda value, _: value)
