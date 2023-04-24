@@ -1,0 +1,19 @@
+version: '3.3'
+services:
+  mongodb:
+    image: mongo:6-jammy
+    ports:
+      - '27017:27017'
+    volumes:
+      - dbdata6:/data/db
+  redis:
+    image: redis:6.2-alpine
+    ports:
+      - '6379:6379'
+    volumes:
+      - cache:/data
+
+
+volumes:
+  dbdata6:
+  cache:
