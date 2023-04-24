@@ -18,8 +18,8 @@ func NewPostgresFinanceRepository(pool *pgxpool.Pool) PostgresFinanceRepository 
 }
 
 func (pfr PostgresFinanceRepository) CreateFinanceSpending(ctx context.Context, userId int, spending finance.Spending) error {
-	_, err := pfr.pool.Exec(ctx, "INSERT INTO spend(name, type, user_id) values ($1, $2, $3)",
-		spending.Name, spending.Type, userId)
+	_, err := pfr.pool.Exec(ctx, "INSERT INTO spend(name, type, user_id, amount, currency) values ($1, $2, $3, $4, $5)",
+		spending.Name, spending.Type, userId, spending.Amount, spending.Currency)
 	if err != nil {
 		return err
 	}
@@ -30,7 +30,7 @@ func (pfr PostgresFinanceRepository) CreateFinanceSpending(ctx context.Context, 
 func (pfr PostgresFinanceRepository) GetUserFinanceSpends(ctx context.Context, userId int) (error, []finance.Spending) {
 	spends := make([]finance.Spending, 0, 30)
 
-	rows, err := pfr.pool.Query(ctx, "SELECT name, type, COALESCE(amount, 0) FROM spend WHERE user_id=$1", userId)
+	rows, err := pfr.pool.Query(ctx, "SELECT name, type, COALESCE(amount, 0), coalesce(currency, '') FROM spend WHERE user_id=$1", userId)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -38,7 +38,7 @@ func (pfr PostgresFinanceRepository) GetUserFinanceSpends(ctx context.Context, u
 	for rows.Next() {
 		var sp finance.Spending
 		sp.UserId = userId
-		err = rows.Scan(&sp.Name, &sp.Type, &sp.Amount)
+		err = rows.Scan(&sp.Name, &sp.Type, &sp.Amount, &sp.Currency)
 		spends = append(spends, sp)
 	}
 
