@@ -20,7 +20,7 @@ class UpdaterCurrencyApplication:
         self._api_session = session
 
     def build(self):
-        client_id = "FIXME to env"
+        client_id = "b7c4832eed6e43e691fb217e25a58abf"
 
         currency_api = OpenExchangerApi(session=self._api_session, client_id=client_id)
 
