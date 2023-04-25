@@ -6,3 +6,7 @@ type TestSpending struct {
 	Amount   int    `json:"amount"`
 	Currency string `json:"currency"`
 }
+
+type DeleteRequest struct {
+	SpendId int `json:"spend_id"`
+}
