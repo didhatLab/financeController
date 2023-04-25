@@ -10,3 +10,10 @@ type TestSpending struct {
 type DeleteRequest struct {
 	SpendId int `json:"spend_id"`
 }
+
+type UpdateRequest struct {
+	SpendId int     `json:"spend_id"`
+	Name    *string `json:"name"`
+	Type    *string `json:"type"`
+	Amount  *int    `json:"amount"`
+}
