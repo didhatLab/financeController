@@ -21,6 +21,7 @@ func NewApplication(ctx context.Context, pool *pgxpool.Pool) (error, App) {
 		CreateSpendService: services.CreateCreateSpendsService(finRepo),
 		GetSpendsService:   services.CreateGetSpendsService(finRepo),
 		DeleteSpendService: services.CreateDeleteSpendsService(finRepo),
+		UpdateSpendService: services.NewUpdateSpendsService(finRepo),
 		Ctx:                ctx,
 	}
 
