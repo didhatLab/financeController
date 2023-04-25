@@ -1,6 +1,9 @@
 package finance
 
-import "main/finances/entrypoints/webmodels"
+import (
+	"main/finances/entrypoints/webmodels"
+	"time"
+)
 
 type Spending struct {
 	UserId   int
@@ -8,6 +11,7 @@ type Spending struct {
 	Type     string
 	Amount   int
 	Currency string
+	Time     time.Time
 }
 
 type FactoryImp struct{}
