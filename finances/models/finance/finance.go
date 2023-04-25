@@ -6,6 +6,7 @@ import (
 )
 
 type Spending struct {
+	Id       int
 	UserId   int
 	Name     string
 	Type     string

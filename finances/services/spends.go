@@ -41,3 +41,22 @@ func (gs GetSpendsService) GetUserSpends(ctx context.Context, user user.User) (e
 
 	return nil, spends
 }
+
+type DeleteSpendsService struct {
+	repository repo.FinanceRepository
+}
+
+func CreateDeleteSpendsService(repo repo.FinanceRepository) DeleteSpendsService {
+	return DeleteSpendsService{repository: repo}
+}
+
+func (ds DeleteSpendsService) DeleteUserSpend(ctx context.Context, userId int, spendId int) error {
+	err := ds.repository.DeleteFinanceSpending(ctx, userId, spendId)
+
+	if err != nil {
+		return err
+	}
+
+	return err
+
+}

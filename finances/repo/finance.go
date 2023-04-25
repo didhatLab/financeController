@@ -30,7 +30,7 @@ func (pfr PostgresFinanceRepository) CreateFinanceSpending(ctx context.Context, 
 func (pfr PostgresFinanceRepository) GetUserFinanceSpends(ctx context.Context, userId int) (error, []finance.Spending) {
 	spends := make([]finance.Spending, 0, 30)
 
-	rows, err := pfr.pool.Query(ctx, "SELECT name, type, COALESCE(amount, 0), coalesce(currency, ''), time FROM spend WHERE user_id=$1", userId)
+	rows, err := pfr.pool.Query(ctx, "SELECT name, type, COALESCE(amount, 0), coalesce(currency, ''), time, id FROM spend WHERE user_id=$1", userId)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -38,7 +38,7 @@ func (pfr PostgresFinanceRepository) GetUserFinanceSpends(ctx context.Context, u
 	for rows.Next() {
 		var sp finance.Spending
 		sp.UserId = userId
-		err = rows.Scan(&sp.Name, &sp.Type, &sp.Amount, &sp.Currency, &sp.Time)
+		err = rows.Scan(&sp.Name, &sp.Type, &sp.Amount, &sp.Currency, &sp.Time, &sp.Id)
 		spends = append(spends, sp)
 	}
 
@@ -46,6 +46,11 @@ func (pfr PostgresFinanceRepository) GetUserFinanceSpends(ctx context.Context, u
 }
 
 func (pfr PostgresFinanceRepository) DeleteFinanceSpending(ctx context.Context, userId int, id int) error {
+	_, err := pfr.pool.Exec(ctx, "DELETE FROM spend WHERE id=$1 AND user_id=$2", id, userId)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
 	return nil
 }
 

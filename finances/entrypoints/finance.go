@@ -12,6 +12,7 @@ import (
 type FinanceEntryPoint struct {
 	CreateSpendService services.CreatingSpendService
 	GetSpendsService   services.GettingUserSpendsService
+	DeleteSpendService services.DeleteSpendsService
 
 	Ctx context.Context
 }
@@ -31,6 +32,7 @@ func (fe FinanceEntryPoint) spendingEntrypoint() *http.ServeMux {
 
 	spending.Handle("/save", middleware.AuthMiddleware(http.HandlerFunc(fe.saveNewSpending)))
 	spending.Handle("/get", middleware.AuthMiddleware(http.HandlerFunc(fe.getUserSpends)))
+	spending.Handle("/delete", middleware.AuthMiddleware(http.HandlerFunc(fe.deleteUserSpend)))
 
 	return spending
 }
@@ -73,8 +75,37 @@ func (fe FinanceEntryPoint) getUserSpends(w http.ResponseWriter, req *http.Reque
 
 	if err != nil {
 		webmodels.EncodeJSONResponseBody(w, http.StatusInternalServerError, struct{}{})
+		return
 	}
 
 	webmodels.EncodeJSONResponseBody(w, http.StatusOK, spends)
 
+}
+
+func (fe FinanceEntryPoint) deleteUserSpend(w http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
+	realUser, ok := middleware.UserFromContext(ctx)
+
+	if !ok {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	var deleteReq webmodels.DeleteRequest
+
+	err := webmodels.DecodeJSONBody(w, req, &deleteReq)
+
+	if err != nil {
+		webmodels.EncodeJSONResponseBody(w, http.StatusBadRequest, struct{ Err string }{Err: err.Error()})
+		return
+	}
+
+	err = fe.DeleteSpendService.DeleteUserSpend(ctx, realUser.UserId, deleteReq.SpendId)
+
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
 }
