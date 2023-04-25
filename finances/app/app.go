@@ -20,6 +20,7 @@ func NewApplication(ctx context.Context, pool *pgxpool.Pool) (error, App) {
 	finEntry := entrypoints.FinanceEntryPoint{
 		CreateSpendService: services.CreateCreateSpendsService(finRepo),
 		GetSpendsService:   services.CreateGetSpendsService(finRepo),
+		DeleteSpendService: services.CreateDeleteSpendsService(finRepo),
 		Ctx:                ctx,
 	}
 
