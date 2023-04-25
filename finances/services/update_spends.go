@@ -15,7 +15,7 @@ func NewUpdateSpendsService(repo repo.PostgresFinanceRepository) UpdateSpendsSer
 }
 
 func (us UpdateSpendsService) UpdateUserSpend(ctx context.Context, req webmodels.UpdateRequest, userId int) error {
-	err := us.repository.UpdateFinanceSpending(ctx, req)
+	err := us.repository.UpdateFinanceSpending(ctx, req, userId)
 
 	return err
 }
