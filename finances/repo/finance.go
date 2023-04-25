@@ -46,6 +46,11 @@ func (pfr PostgresFinanceRepository) GetUserFinanceSpends(ctx context.Context, u
 }
 
 func (pfr PostgresFinanceRepository) DeleteFinanceSpending(ctx context.Context, userId int, id int) error {
+	_, err := pfr.pool.Exec(ctx, "DELETE FROM spend WHERE id=$1 AND user_id=$2", id, userId)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
 	return nil
 }
 
