@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"log"
+	"main/finances/entrypoints/webmodels"
 	"main/finances/models/finance"
 )
 
@@ -54,8 +55,18 @@ func (pfr PostgresFinanceRepository) DeleteFinanceSpending(ctx context.Context, 
 	return nil
 }
 
+func (pfr PostgresFinanceRepository) UpdateFinanceSpending(ctx context.Context, request webmodels.UpdateRequest) error {
+
+	_, err := pfr.pool.Exec(ctx, "UPDATE spend "+
+		"SET name=COALESCE($1, name), type=COALESCE($2, type), amount=COALESCE($3, amount)"+
+		" WHERE id=$4", request.Name, request.Type, request.Amount, request.SpendId)
+
+	return err
+}
+
 type FinanceRepository interface {
 	CreateFinanceSpending(ctx context.Context, userId int, spending finance.Spending) error
 	GetUserFinanceSpends(ctx context.Context, userId int) (error, []finance.Spending)
 	DeleteFinanceSpending(ctx context.Context, userId int, id int) error
+	UpdateFinanceSpending(ctx context.Context, request webmodels.UpdateRequest) error
 }
