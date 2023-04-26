@@ -19,8 +19,8 @@ func NewPostgresFinanceRepository(pool *pgxpool.Pool) PostgresFinanceRepository 
 }
 
 func (pfr PostgresFinanceRepository) CreateFinanceSpending(ctx context.Context, userId int, spending finance.Spending) error {
-	_, err := pfr.pool.Exec(ctx, "INSERT INTO spend(name, type, user_id, amount, currency) values ($1, $2, $3, $4, $5)",
-		spending.Name, spending.Type, userId, spending.Amount, spending.Currency)
+	_, err := pfr.pool.Exec(ctx, "INSERT INTO spend(name, type, user_id, amount, currency, description) values ($1, $2, $3, $4, $5, $6)",
+		spending.Name, spending.Type, userId, spending.Amount, spending.Currency, spending.Description)
 	if err != nil {
 		return err
 	}
@@ -31,7 +31,7 @@ func (pfr PostgresFinanceRepository) CreateFinanceSpending(ctx context.Context, 
 func (pfr PostgresFinanceRepository) GetUserFinanceSpends(ctx context.Context, userId int) (error, []finance.Spending) {
 	spends := make([]finance.Spending, 0, 30)
 
-	rows, err := pfr.pool.Query(ctx, "SELECT name, type, COALESCE(amount, 0), coalesce(currency, ''), time, id FROM spend WHERE user_id=$1", userId)
+	rows, err := pfr.pool.Query(ctx, "SELECT name, type, COALESCE(amount, 0), coalesce(currency, ''), time, id, description FROM spend WHERE user_id=$1 ORDER BY time DESC ", userId)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -39,7 +39,7 @@ func (pfr PostgresFinanceRepository) GetUserFinanceSpends(ctx context.Context, u
 	for rows.Next() {
 		var sp finance.Spending
 		sp.UserId = userId
-		err = rows.Scan(&sp.Name, &sp.Type, &sp.Amount, &sp.Currency, &sp.Time, &sp.Id)
+		err = rows.Scan(&sp.Name, &sp.Type, &sp.Amount, &sp.Currency, &sp.Time, &sp.Id, &sp.Description)
 		spends = append(spends, sp)
 	}
 
@@ -58,8 +58,12 @@ func (pfr PostgresFinanceRepository) DeleteFinanceSpending(ctx context.Context, 
 func (pfr PostgresFinanceRepository) UpdateFinanceSpending(ctx context.Context, request webmodels.UpdateRequest, userId int) error {
 
 	_, err := pfr.pool.Exec(ctx, "UPDATE spend "+
-		"SET name=COALESCE($1, name), type=COALESCE($2, type), amount=COALESCE($3, amount)"+
-		" WHERE id=$4 AND user_id=$5", request.Name, request.Type, request.Amount, request.SpendId, userId)
+		"SET name=COALESCE($1, name), type=COALESCE($2, type), amount=COALESCE($3, amount), description=COALESCE($4, description)"+
+		" WHERE id=$5 AND user_id=$6", request.Name, request.Type, request.Amount, request.Description, request.SpendId, userId)
+
+	if err != nil {
+		log.Println(err)
+	}
 
 	return err
 }
