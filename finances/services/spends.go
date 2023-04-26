@@ -18,10 +18,7 @@ func CreateCreateSpendsService(repo repo.FinanceRepository) CreateSpendService {
 func (cs CreateSpendService) CreateNewSpend(ctx context.Context, user user.User, spending finance.Spending) error {
 	err := cs.repository.CreateFinanceSpending(ctx, user.UserId, spending)
 
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 type GetSpendsService struct {
@@ -35,11 +32,7 @@ func CreateGetSpendsService(repo repo.FinanceRepository) GetSpendsService {
 func (gs GetSpendsService) GetUserSpends(ctx context.Context, user user.User) (error, []finance.Spending) {
 	err, spends := gs.repository.GetUserFinanceSpends(ctx, user.UserId)
 
-	if err != nil {
-		return err, nil
-	}
-
-	return nil, spends
+	return err, spends
 }
 
 type DeleteSpendsService struct {
@@ -52,10 +45,6 @@ func CreateDeleteSpendsService(repo repo.FinanceRepository) DeleteSpendsService 
 
 func (ds DeleteSpendsService) DeleteUserSpend(ctx context.Context, userId int, spendId int) error {
 	err := ds.repository.DeleteFinanceSpending(ctx, userId, spendId)
-
-	if err != nil {
-		return err
-	}
 
 	return err
 
