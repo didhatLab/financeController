@@ -58,8 +58,12 @@ func (pfr PostgresFinanceRepository) DeleteFinanceSpending(ctx context.Context, 
 func (pfr PostgresFinanceRepository) UpdateFinanceSpending(ctx context.Context, request webmodels.UpdateRequest, userId int) error {
 
 	_, err := pfr.pool.Exec(ctx, "UPDATE spend "+
-		"SET name=COALESCE($1, name), type=COALESCE($2, type), amount=COALESCE($3, amount)"+
-		" WHERE id=$4 AND user_id=$5", request.Name, request.Type, request.Amount, request.SpendId, userId)
+		"SET name=COALESCE($1, name), type=COALESCE($2, type), amount=COALESCE($3, amount), description=COALESCE($4, description)"+
+		" WHERE id=$5 AND user_id=$6", request.Name, request.Type, request.Amount, request.Description, request.SpendId, userId)
+
+	if err != nil {
+		log.Println(err)
+	}
 
 	return err
 }

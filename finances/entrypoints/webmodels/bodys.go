@@ -13,8 +13,9 @@ type DeleteRequest struct {
 }
 
 type UpdateRequest struct {
-	SpendId int     `json:"spend_id"`
-	Name    *string `json:"name"`
-	Type    *string `json:"type"`
-	Amount  *int    `json:"amount"`
+	SpendId     int     `json:"spend_id"`
+	Name        *string `json:"name"`
+	Type        *string `json:"type"`
+	Amount      *int    `json:"amount"`
+	Description *string `json:"description"`
 }
