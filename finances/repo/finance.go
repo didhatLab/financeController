@@ -31,7 +31,7 @@ func (pfr PostgresFinanceRepository) CreateFinanceSpending(ctx context.Context, 
 func (pfr PostgresFinanceRepository) GetUserFinanceSpends(ctx context.Context, userId int) (error, []finance.Spending) {
 	spends := make([]finance.Spending, 0, 30)
 
-	rows, err := pfr.pool.Query(ctx, "SELECT name, type, COALESCE(amount, 0), coalesce(currency, ''), time, id, description FROM spend WHERE user_id=$1", userId)
+	rows, err := pfr.pool.Query(ctx, "SELECT name, type, COALESCE(amount, 0), coalesce(currency, ''), time, id, description FROM spend WHERE user_id=$1 ORDER BY time DESC ", userId)
 	if err != nil {
 		log.Fatal(err)
 	}
