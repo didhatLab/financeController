@@ -29,10 +29,10 @@ async def inflate_ui_for_app(
     auth_header = {"Auth-Token": token}
 
     async with asyncio.TaskGroup() as tg:
-        spends = await tg.create_task(get_spends(session, auth_header))
-        currency_rate = await tg.create_task(get_currency_rate(session))
+        spends = tg.create_task(get_spends(session, auth_header))
+        currency_rate = tg.create_task(get_currency_rate(session))
 
-    return InflateUIData(spends=spends, currency_rate=currency_rate)
+    return InflateUIData(spends=spends.result(), currency_rate=currency_rate.result())
 
 
 async def get_spends(session: aiohttp.ClientSession, headers: dict) -> list[Spending]:
