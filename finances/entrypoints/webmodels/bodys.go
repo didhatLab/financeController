@@ -1,10 +1,11 @@
 package webmodels
 
 type TestSpending struct {
-	Name     string `json:"name"`
-	Type     string `json:"type"`
-	Amount   int    `json:"amount"`
-	Currency string `json:"currency"`
+	Name        string `json:"name"`
+	Type        string `json:"type"`
+	Amount      int    `json:"amount"`
+	Currency    string `json:"currency"`
+	Description string `json:"description"`
 }
 
 type DeleteRequest struct {
