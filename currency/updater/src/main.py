@@ -21,7 +21,7 @@ async def main():
 
     service_for_run = app.build()
     schedule = Scheduler()
-
+    await service_for_run.update_currencies()
     schedule.cyclic(dt.timedelta(hours=1), service_for_run.update_currencies)
 
     while True:
