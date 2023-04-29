@@ -7,6 +7,7 @@ class Spending(BaseModel):
     Type: str
     Amount: int
     Currency: str
+    Description: str
 
     class Config:
         frozen = True
