@@ -54,14 +54,16 @@ func (fe FinanceEntryPoint) saveNewSpending(w http.ResponseWriter, req *http.Req
 		webmodels.EncodeJSONResponseBody(w, http.StatusBadRequest, struct{ Err string }{Err: err.Error()})
 		return
 	}
-	err = fe.CreateSpendService.CreateNewSpend(fe.Ctx, realUser,
+	err, newSpendId := fe.CreateSpendService.CreateNewSpend(fe.Ctx, realUser,
 		finance.SpendingFromUserInput(newSpending, realUser.UserId))
 
 	if err != nil {
 		return
 	}
 
-	webmodels.EncodeJSONResponseBody(w, http.StatusCreated, struct{}{})
+	webmodels.EncodeJSONResponseBody(w, http.StatusCreated, struct {
+		SpendId int `json:"spend_id"`
+	}{SpendId: newSpendId})
 
 }
 

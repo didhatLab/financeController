@@ -7,7 +7,7 @@ import (
 )
 
 type CreatingSpendService interface {
-	CreateNewSpend(ctx context.Context, user user.User, spending finance.Spending) error
+	CreateNewSpend(ctx context.Context, user user.User, spending finance.Spending) (error, int)
 }
 
 type GettingUserSpendsService interface {

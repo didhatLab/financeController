@@ -18,14 +18,15 @@ func NewPostgresFinanceRepository(pool *pgxpool.Pool) PostgresFinanceRepository 
 	}
 }
 
-func (pfr PostgresFinanceRepository) CreateFinanceSpending(ctx context.Context, userId int, spending finance.Spending) error {
-	_, err := pfr.pool.Exec(ctx, "INSERT INTO spend(name, type, user_id, amount, currency, description) values ($1, $2, $3, $4, $5, $6)",
-		spending.Name, spending.Type, userId, spending.Amount, spending.Currency, spending.Description)
+func (pfr PostgresFinanceRepository) CreateFinanceSpending(ctx context.Context, userId int, spending finance.Spending) (error, int) {
+	var insertedId int
+	err := pfr.pool.QueryRow(ctx, "INSERT INTO spend(name, type, user_id, amount, currency, description) values ($1, $2, $3, $4, $5, $6) RETURNING id",
+		spending.Name, spending.Type, userId, spending.Amount, spending.Currency, spending.Description).Scan(&insertedId)
 	if err != nil {
-		return err
+		return err, -1
 	}
 
-	return nil
+	return nil, insertedId
 }
 
 func (pfr PostgresFinanceRepository) GetUserFinanceSpends(ctx context.Context, userId int) (error, []finance.Spending) {
@@ -69,7 +70,7 @@ func (pfr PostgresFinanceRepository) UpdateFinanceSpending(ctx context.Context, 
 }
 
 type FinanceRepository interface {
-	CreateFinanceSpending(ctx context.Context, userId int, spending finance.Spending) error
+	CreateFinanceSpending(ctx context.Context, userId int, spending finance.Spending) (error, int)
 	GetUserFinanceSpends(ctx context.Context, userId int) (error, []finance.Spending)
 	DeleteFinanceSpending(ctx context.Context, userId int, id int) error
 	UpdateFinanceSpending(ctx context.Context, request webmodels.UpdateRequest, userId int) error

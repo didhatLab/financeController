@@ -15,10 +15,10 @@ func CreateCreateSpendsService(repo repo.FinanceRepository) CreateSpendService {
 	return CreateSpendService{repository: repo}
 }
 
-func (cs CreateSpendService) CreateNewSpend(ctx context.Context, user user.User, spending finance.Spending) error {
-	err := cs.repository.CreateFinanceSpending(ctx, user.UserId, spending)
+func (cs CreateSpendService) CreateNewSpend(ctx context.Context, user user.User, spending finance.Spending) (error, int) {
+	err, newSpendId := cs.repository.CreateFinanceSpending(ctx, user.UserId, spending)
 
-	return err
+	return err, newSpendId
 }
 
 type GetSpendsService struct {
