@@ -1,13 +1,14 @@
 import {NativeStackScreenProps} from "@react-navigation/native-stack";
-import {DrawerParams} from "./types";
+import {DrawerParams} from "../types";
 import {View, StyleSheet} from 'react-native';
 import {FAB, TextInput} from 'react-native-paper';
 import React, {useCallback, useState} from "react";
 import { Select, CheckIcon, Input, Box, TextArea, FormControl} from "native-base";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {HomeStackParams} from "./types";
 
 
-type Props = NativeStackScreenProps<DrawerParams, 'AddNewSpend'>
+type Props = NativeStackScreenProps<HomeStackParams, 'AddNewSpend'>
 
 
 export function AddNewSpendScreen(props: Props) {
