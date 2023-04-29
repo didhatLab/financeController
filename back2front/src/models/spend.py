@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 
 class Spending(BaseModel):
+    Id: int
     Name: str
     Type: str
     Amount: int
