@@ -45,12 +45,12 @@ export function HomeScreen({ navigation }: HomeProps) {
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start' }}>
             <CurrencyRateDisplay base={currencyRate?.base} timestamp={currencyRate?.timestamp} rates={currencyRate?.rates}/>
-            <SpendList spends={userSpends} navigation={{navigation: navigation}}/>
+            <SpendList spends={userSpends} navigation={{navigation: navigation}} setSpends={setUserSpends}/>
             <FAB
                 style={styles.fab}
                 icon="plus"
                 label="Add new note"
-                onPress={() => navigation.navigate('AddNewSpend', {})}
+                onPress={() => navigation.navigate('AddNewSpend', {setSpends: setUserSpends})}
 
             />
         </View>
