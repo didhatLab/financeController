@@ -4,7 +4,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {RootStackParamList} from "./types/screen-types";
-import {HomeScreen} from "./screens/menu/home";
+import {HomeScreen} from "./screens/menu/spend/home";
 import {Provider as PaperProvider} from 'react-native-paper';
 import {SplashScreen} from "./screens/splash";
 import {DrawerNavigatorRoutes} from "./screens/menu/drawer-navigator-routes";

@@ -6,6 +6,8 @@ import {ScrollView, StyleSheet, View, FlatList} from "react-native";
 import {Avatar, Card, IconButton, Text, Button, List} from 'react-native-paper';
 import Icon from '@mdi/react';
 import {mdiAccount} from '@mdi/js';
+import {NativeStackNavigationProp} from "@react-navigation/native-stack/lib/typescript/src/types";
+import {HomeProps} from "../screens/menu/spend/types";
 
 
 const Header = styled.header`
@@ -38,33 +40,45 @@ const PostDescription = styled.text`
 `;
 
 
-export const Spend = (spend: Spending) => {
+type OneSpendProps = {
+    spend: Spending
+    navigation: Pick<HomeProps, 'navigation'>
+}
+
+export const Spend = (props: OneSpendProps) => {
     return (
-        <Card key={spend.Id} style={styles.container}>
-            <Card.Title title={spend.Name}/>
+        <Card key={props.spend.Id} style={styles.container}>
+            <Card.Title title={props.spend.Name}/>
             <Card.Content>
-                <Text>{spend.Amount} {spend.Currency}</Text>
+                <Text>{props.spend.Amount} {props.spend.Currency}</Text>
             </Card.Content>
             <Card.Actions>
-                <Button>View</Button>
+                <Button
+                    onPress={() => props.navigation.navigation.navigate('ViewSpend', {spend: props.spend})}>View</Button>
             </Card.Actions>
         </Card>
     );
 };
 
 
-export const SpendList = (props: { spends: Spending[] }) => {
+type SpendsProps = {
+    spends: Spending[]
+    navigation: Pick<HomeProps, 'navigation'>
+}
+
+export const SpendList = (props: SpendsProps) => {
+    console.log(props.spends)
     return (
         <ScrollView showsVerticalScrollIndicator={false} style={styles.ff}>
             <FlatList
                 data={props.spends}
                 renderItem={({item}) => (
-
                     <List.Item
                         title={item.Name}
                         description={`${item.Amount} ${item.Currency}`}
                         descriptionNumberOfLines={1}
                         titleStyle={styles.listTitle}
+                        onPress={() => props.navigation.navigation.navigate('ViewSpend', {spend: item})}
 
                     />)}
                 // keyExtractor={item => '0' ? item.Id == undefined: item.Id.toString()}

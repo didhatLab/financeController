@@ -2,18 +2,18 @@ import * as React from 'react';
 import { Button, View, StyleSheet } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
-import {DrawerParams} from "./types";
+import {DrawerParams} from "../types";
 import {NativeStackScreenProps} from "@react-navigation/native-stack";
 import {useEffect, useState} from "react";
-import {InflateUI, Spending, CurrencyRate} from "../../types/data-types";
-import {CurrencyRateDisplay} from "../../components/currency-rate";
+import {InflateUI, Spending, CurrencyRate} from "../../../types/data-types";
+import {CurrencyRateDisplay} from "../../../components/currency-rate";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {SpendList} from "../../components/user-spending";
+import {SpendList} from "../../../components/user-spending";
 import {FAB} from "react-native-paper";
+import {HomeProps} from "./types";
 
-type Props = NativeStackScreenProps<DrawerParams, 'Home'>;
 
-export function HomeScreen({ navigation }: Props) {
+export function HomeScreen({ navigation }: HomeProps) {
     const [userSpends, setUserSpends] = useState<Spending[]>([]);
     const [currencyRate, setCurrencyRate] = useState<CurrencyRate>();
 
@@ -45,7 +45,7 @@ export function HomeScreen({ navigation }: Props) {
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start' }}>
             <CurrencyRateDisplay base={currencyRate?.base} timestamp={currencyRate?.timestamp} rates={currencyRate?.rates}/>
-            <SpendList spends={userSpends}/>
+            <SpendList spends={userSpends} navigation={{navigation: navigation}}/>
             <FAB
                 style={styles.fab}
                 icon="plus"

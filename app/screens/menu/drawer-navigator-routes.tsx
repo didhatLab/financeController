@@ -5,9 +5,10 @@ import {RootStackParamList} from "../../types/screen-types";
 import {NativeStackScreenProps} from "@react-navigation/native-stack";
 import {useEffect, useState} from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {HomeScreen} from "./home";
+import {HomeScreen} from "./spend/home";
 import {DrawerParams} from "./types";
-import {AddNewSpendScreen} from "./add-spending";
+import {AddNewSpendScreen} from "./spend/add-spending";
+import {HomeRoutes} from "./spend/route";
 
 type Props = NativeStackScreenProps<RootStackParamList, 'DrawNavigationRoutes'>
 
@@ -18,11 +19,9 @@ const Stack = createStackNavigator()
 export const DrawerNavigatorRoutes = (props: Props) => {
     return (
         <Drawer.Navigator>
-            <Drawer.Screen name={"Home"} component={HomeScreen}
+            <Drawer.Screen name={"Home"} component={HomeRoutes}
                            options={{drawerLabel: 'Home', title: 'Home', headerTitle: 'Home'}}
             />
-            <Drawer.Screen name={"AddNewSpend"} component={AddNewSpendScreen}
-                           options={{drawerLabel: 'Add New', headerShown: false}}/>
         </Drawer.Navigator>
     )
 }
