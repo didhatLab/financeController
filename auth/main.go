@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/rs/cors"
 	"log"
 	"main/auth/app"
 	"net/http"
@@ -15,7 +16,7 @@ func main() {
 
 	application, err := app.NewApplication(ctx, pool)
 
-	err = http.ListenAndServe(":4001", application.AppMux)
+	err = http.ListenAndServe(":4001", cors.AllowAll().Handler(application.AppMux))
 	if err != nil {
 		log.Fatal(err)
 		return

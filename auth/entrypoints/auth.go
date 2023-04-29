@@ -18,8 +18,8 @@ type AuthEntryPoint struct {
 func (ap AuthEntryPoint) AuthEntryPoint() *http.ServeMux {
 	authMux := http.NewServeMux()
 
-	authMux.HandleFunc("/register", ap.registerNewUser)
-	authMux.HandleFunc("/token", ap.getTokenForUser)
+	authMux.Handle("/register", http.HandlerFunc(ap.registerNewUser))
+	authMux.Handle("/token", http.HandlerFunc(ap.getTokenForUser))
 
 	return authMux
 
@@ -60,7 +60,6 @@ func (ap AuthEntryPoint) getTokenForUser(w http.ResponseWriter, req *http.Reques
 		decoder.EncodeJSONResponseBody(w, http.StatusBadRequest, struct{}{})
 		return
 	}
-
 	decoder.EncodeJSONResponseBody(w, http.StatusOK, struct{ Token string }{Token: token})
 
 }

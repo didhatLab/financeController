@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/rs/cors"
 	application "main/finances/app"
 	"net/http"
 )
@@ -20,6 +21,6 @@ func main() {
 
 	//entry := entrypoints.FinanceEntrypoint()
 
-	http.ListenAndServe(":4000", app.AppMux)
+	http.ListenAndServe(":4000", cors.AllowAll().Handler(app.AppMux))
 
 }

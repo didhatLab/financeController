@@ -3,7 +3,7 @@ from typing import List
 
 import aiohttp
 from fastapi import FastAPI, Depends
-from pydantic import parse_obj_as
+from fastapi.middleware.cors import CORSMiddleware
 
 from src.auth import auth_header_token
 from src.models.infalte import InflateUIData
@@ -47,6 +47,15 @@ async def get_currency_rate(session: aiohttp.ClientSession) -> CurrencyRate:
         rate = await r.json()
 
     return CurrencyRate(**rate)
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 if __name__ == "__main__":
