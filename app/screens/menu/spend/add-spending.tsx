@@ -3,7 +3,7 @@ import {DrawerParams} from "../types";
 import {View, StyleSheet} from 'react-native';
 import {FAB, TextInput} from 'react-native-paper';
 import React, {useCallback, useState} from "react";
-import { Select, CheckIcon, Input, Box, TextArea, FormControl} from "native-base";
+import {Select, CheckIcon, Input, Box, TextArea, FormControl} from "native-base";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {HomeStackParams} from "./types";
 
@@ -21,25 +21,40 @@ export function AddNewSpendScreen(props: Props) {
     const onSaveNote = useCallback(() => {
         AsyncStorage.getItem('token')
             .then((token) => {
-            const dataForSend = {
-                name: spendTitle,
-                type: 'common',
-                amount: Number(amount),
-                currency: currency,
-                description: spendDescription,
-            }
-            return fetch("http://localhost:4000/spending/save", {
-                method: 'POST',
-                body: JSON.stringify(dataForSend),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Auth-Token': token ?? ''
+                const dataForSend = {
+                    name: spendTitle,
+                    type: 'common',
+                    amount: Number(amount),
+                    currency: currency,
+                    description: spendDescription,
                 }
+                return fetch("http://localhost:4000/spending/save", {
+                    method: 'POST',
+                    body: JSON.stringify(dataForSend),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Auth-Token': token ?? ''
+                    }
+                })
             })
-        }).then((response) => response.json())
+            .then((response) => response.json()).then(
+            (json) => {
+                const spendId = json.spend_id;
+                props.route.params.setSpends((spends) => {
+                    spends.unshift({Id: spendId,
+                        Amount: Number(amount),
+                        Currency: currency,
+                        Description: spendDescription,
+                        Name: spendTitle,
+                        Type: 'common',
+                        Time: '',
+                    })
+                    return [...spends]
+                })
+                props.navigation.goBack();
+            }
+        )
 
-
-        props.navigation.goBack();
     }, [spendTitle, spendDescription, amount, currency])
 
     return (
@@ -52,15 +67,17 @@ export function AddNewSpendScreen(props: Props) {
                               onChangeText={text => setSpendDescription(text)} // for android and ios
                               w="100%" autoCompleteType={undefined} margin={10} placeholder='Description'/>
 
-                    <Input value={amount} keyboardType="numeric" w='100%' onChangeText={setAmount} placeholder="Amount"/>
+                    <Input value={amount} keyboardType="numeric" w='100%' onChangeText={setAmount}
+                           placeholder="Amount"/>
 
-                    <Select selectedValue={currency} minWidth="200" accessibilityLabel="Choose currency" placeholder="Choose Currency" _selectedItem={{
+                    <Select selectedValue={currency} minWidth="200" accessibilityLabel="Choose currency"
+                            placeholder="Choose Currency" _selectedItem={{
                         bg: "teal.600",
                         endIcon: <CheckIcon size="5"/>
                     }} mt={1} onValueChange={itemValue => setCurrency(itemValue)} marginTop={10}>
-                        <Select.Item label="RUB" value="RUB" />
-                        <Select.Item label="USD" value="USD" />
-                        <Select.Item label="EUR" value="EUR" />
+                        <Select.Item label="RUB" value="RUB"/>
+                        <Select.Item label="USD" value="USD"/>
+                        <Select.Item label="EUR" value="EUR"/>
                     </Select>
                 </Box>
                 <View style={styles.viewFab}>

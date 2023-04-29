@@ -41,6 +41,8 @@ export function ViewSpending(props: Props) {
     }, [spendTitle, spendDescription, amount, currency])
 
     const onDeleteSpend = useCallback(() => {
+        props.navigation.goBack()
+
         AsyncStorage.getItem('token')
             .then((token) => {
                 const dataForSend = {
@@ -54,9 +56,19 @@ export function ViewSpending(props: Props) {
                         'Auth-Token': token ?? ''
                     }
                 })
-            }).then((response) => response.json())
-
-        props.navigation.goBack()
+            }).then((_) => {
+            let targetIndex = 0
+            props.route.params.setSpends((spends) => {
+                for (let i = 0; i < spends.length; i++){
+                    if (spends[i].Id == props.route.params.spend.Id){
+                        targetIndex = i;
+                        break;
+                    }
+                }
+                spends.splice(targetIndex, 1);
+                return [...spends];
+            })
+        })
 
     }, [])
 
