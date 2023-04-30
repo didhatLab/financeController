@@ -6,6 +6,7 @@ import (
 	"main/finances/entrypoints"
 	"main/finances/repo"
 	"main/finances/services"
+	"main/finances/services/privacy"
 	"net/http"
 )
 
@@ -15,14 +16,18 @@ type App struct {
 
 func NewApplication(ctx context.Context, pool *pgxpool.Pool) (error, App) {
 
+	groupRepo := repo.NewPostgresGroupRepository(pool)
 	finRepo := repo.NewPostgresFinanceRepository(pool)
 
+	groupAccessChecker := privacy.NewGroupAccessChecker(groupRepo)
+
 	finEntry := entrypoints.FinanceEntryPoint{
-		CreateSpendService: services.CreateCreateSpendsService(finRepo),
-		GetSpendsService:   services.CreateGetSpendsService(finRepo),
-		DeleteSpendService: services.CreateDeleteSpendsService(finRepo),
-		UpdateSpendService: services.NewUpdateSpendsService(finRepo),
-		Ctx:                ctx,
+		CreateSpendService:    services.NewCreateSpendsService(finRepo, groupAccessChecker),
+		GetSpendsService:      services.NewGetSpendsService(finRepo),
+		DeleteSpendService:    services.NewDeleteSpendsService(finRepo, groupAccessChecker),
+		UpdateSpendService:    services.NewUpdateSpendsService(finRepo, groupAccessChecker),
+		GetGroupSpendsService: services.NewGroupSpendsService(finRepo, groupAccessChecker),
+		Ctx:                   ctx,
 	}
 
 	return nil, App{AppMux: finEntry.FinanceEntrypoint()}

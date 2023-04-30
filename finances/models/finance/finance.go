@@ -14,6 +14,7 @@ type Spending struct {
 	Currency    string
 	Description string
 	Time        time.Time
+	GroupId     *int
 }
 
 type FactoryImp struct{}
@@ -25,7 +26,9 @@ func SpendingFromUserInput(spending webmodels.TestSpending, userId int) Spending
 		Type:        spending.Type,
 		Amount:      spending.Amount,
 		Currency:    spending.Currency,
-		Description: spending.Description}
+		Description: spending.Description,
+		GroupId:     spending.GroupId,
+	}
 }
 
 func (fi FactoryImp) CreateSpending(userId int, name string, Type string, amount int, currency string) Spending {
