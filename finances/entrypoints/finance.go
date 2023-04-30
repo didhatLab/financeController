@@ -5,16 +5,16 @@ import (
 	"main/finances/entrypoints/middleware"
 	"main/finances/entrypoints/webmodels"
 	"main/finances/models/finance"
-	"main/finances/services"
+	"main/finances/services/spend"
 	"net/http"
 )
 
 type FinanceEntryPoint struct {
-	CreateSpendService    services.CreatingSpendService
-	GetSpendsService      services.GettingUserSpendsService
-	DeleteSpendService    services.DeleteSpendsService
-	UpdateSpendService    services.UpdateSpendsService
-	GetGroupSpendsService services.GetGroupSpendsService
+	CreateSpendService    spend.CreatingSpendService
+	GetSpendsService      spend.GettingUserSpendsService
+	DeleteSpendService    spend.DeleteSpendsService
+	UpdateSpendService    spend.UpdateSpendsService
+	GetGroupSpendsService spend.GetGroupSpendsService
 
 	Ctx context.Context
 }

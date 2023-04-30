@@ -5,8 +5,8 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"main/finances/entrypoints"
 	"main/finances/repo"
-	"main/finances/services"
 	"main/finances/services/privacy"
+	"main/finances/services/spend"
 	"net/http"
 )
 
@@ -22,11 +22,11 @@ func NewApplication(ctx context.Context, pool *pgxpool.Pool) (error, App) {
 	groupAccessChecker := privacy.NewGroupAccessChecker(groupRepo)
 
 	finEntry := entrypoints.FinanceEntryPoint{
-		CreateSpendService:    services.NewCreateSpendsService(finRepo, groupAccessChecker),
-		GetSpendsService:      services.NewGetSpendsService(finRepo),
-		DeleteSpendService:    services.NewDeleteSpendsService(finRepo, groupAccessChecker),
-		UpdateSpendService:    services.NewUpdateSpendsService(finRepo, groupAccessChecker),
-		GetGroupSpendsService: services.NewGroupSpendsService(finRepo, groupAccessChecker),
+		CreateSpendService:    spend.NewCreateSpendsService(finRepo, groupAccessChecker),
+		GetSpendsService:      spend.NewGetSpendsService(finRepo),
+		DeleteSpendService:    spend.NewDeleteSpendsService(finRepo, groupAccessChecker),
+		UpdateSpendService:    spend.NewUpdateSpendsService(finRepo, groupAccessChecker),
+		GetGroupSpendsService: spend.NewGroupSpendsService(finRepo, groupAccessChecker),
 		Ctx:                   ctx,
 	}
 
