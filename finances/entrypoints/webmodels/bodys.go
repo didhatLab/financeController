@@ -41,3 +41,7 @@ type CreateGroupRequest struct {
 	GroupName        string `json:"group_name"`
 	GroupDescription string `json:"group_description"`
 }
+
+type DeleteGroupRequest struct {
+	GroupId int `json:"group_id"`
+}
