@@ -5,27 +5,28 @@ import (
 	"main/finances/entrypoints/middleware"
 	"main/finances/entrypoints/webmodels"
 	"main/finances/models/finance"
-	"main/finances/services"
+	"main/finances/services/spend"
 	"net/http"
 )
 
 type FinanceEntryPoint struct {
-	CreateSpendService services.CreatingSpendService
-	GetSpendsService   services.GettingUserSpendsService
-	DeleteSpendService services.DeleteSpendsService
-	UpdateSpendService services.UpdateSpendsService
+	CreateSpendService    spend.CreatingSpendService
+	GetSpendsService      spend.GettingUserSpendsService
+	DeleteSpendService    spend.DeleteSpendsService
+	UpdateSpendService    spend.UpdateSpendsService
+	GetGroupSpendsService spend.GetGroupSpendsService
 
 	Ctx context.Context
 }
 
 func (fe FinanceEntryPoint) FinanceEntrypoint() *http.ServeMux {
-	financeMux := http.NewServeMux()
+	//financeMux := http.NewServeMux()
 
 	spending := fe.spendingEntrypoint()
 
-	financeMux.Handle("/", http.StripPrefix("/spending", spending))
+	//financeMux.Handle("/", spending)
 
-	return financeMux
+	return spending
 }
 
 func (fe FinanceEntryPoint) spendingEntrypoint() *http.ServeMux {
@@ -35,6 +36,7 @@ func (fe FinanceEntryPoint) spendingEntrypoint() *http.ServeMux {
 	spending.Handle("/get", middleware.AuthMiddleware(http.HandlerFunc(fe.getUserSpends)))
 	spending.Handle("/delete", middleware.AuthMiddleware(http.HandlerFunc(fe.deleteUserSpend)))
 	spending.Handle("/update", middleware.AuthMiddleware(http.HandlerFunc(fe.editUserSpend)))
+	spending.Handle("/group/get", middleware.AuthMiddleware(http.HandlerFunc(fe.getGroupSpends)))
 
 	return spending
 }
@@ -58,6 +60,7 @@ func (fe FinanceEntryPoint) saveNewSpending(w http.ResponseWriter, req *http.Req
 		finance.SpendingFromUserInput(newSpending, realUser.UserId))
 
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
@@ -104,7 +107,7 @@ func (fe FinanceEntryPoint) deleteUserSpend(w http.ResponseWriter, req *http.Req
 		return
 	}
 
-	err = fe.DeleteSpendService.DeleteUserSpend(ctx, realUser.UserId, deleteReq.SpendId)
+	err = fe.DeleteSpendService.DeleteUserSpend(ctx, realUser.UserId, deleteReq.SpendId, deleteReq.GroupId)
 
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -140,5 +143,32 @@ func (fe FinanceEntryPoint) editUserSpend(w http.ResponseWriter, req *http.Reque
 	}
 
 	w.WriteHeader(http.StatusCreated)
+}
+
+func (fe FinanceEntryPoint) getGroupSpends(w http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
+	realUser, ok := middleware.UserFromContext(ctx)
+
+	if !ok {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	var getReq webmodels.GroupSpendRequest
+
+	err := webmodels.DecodeJSONBody(w, req, &getReq)
+
+	if err != nil {
+		webmodels.EncodeJSONResponseBody(w, http.StatusBadRequest, struct{ Err string }{Err: err.Error()})
+		return
+	}
+
+	spends, err := fe.GetGroupSpendsService.GetGroupSpends(ctx, getReq.GroupId, realUser.UserId)
+	if err != nil {
+		webmodels.EncodeJSONResponseBody(w, http.StatusBadRequest, struct{ Err string }{Err: err.Error()})
+		return
+	}
+
+	webmodels.EncodeJSONResponseBody(w, http.StatusOK, spends)
 
 }
