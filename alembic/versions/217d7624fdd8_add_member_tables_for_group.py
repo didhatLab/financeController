@@ -22,8 +22,8 @@ def upgrade() -> None:
         sa.Column("user_id", sa.Integer, primary_key=True, nullable=False),
         sa.Column("group_id", sa.Integer, primary_key=True, nullable=False),
     )
-    op.create_foreign_key(None, "group_member", "auth", ["user_id"], ["user_id"])
-    op.create_foreign_key(None, "group_member", "spend_group", ["group_id"], ["id"])
+    op.create_foreign_key(None, "group_member", "auth", ["user_id"], ["user_id"], ondelete="CASCADE")
+    op.create_foreign_key(None, "group_member", "spend_group", ["group_id"], ["id"], ondelete="CASCADE")
 
 
 def downgrade() -> None:

@@ -29,10 +29,11 @@ def upgrade() -> None:
         "spend",
         "spend_group",
         ["group_id"],
-        ["id"]
+        ["id"],
+        ondelete="CASCADE"
     )
 
 
 def downgrade() -> None:
     op.drop_column("spend", "group_id")
-    op.drop_table("group")
+    op.drop_table("spend_group")
