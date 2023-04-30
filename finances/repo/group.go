@@ -72,9 +72,16 @@ func (pgr PostgresGroupRepository) DeleteMemberFromGroup(ctx context.Context, gr
 
 }
 
+func (pgr PostgresGroupRepository) DeleteSpendGroup(ctx context.Context, groupId int) error {
+	_, err := pgr.pool.Exec(ctx, "DELETE FROM spend_group WHERE id=$1", groupId)
+
+	return err
+}
+
 type GroupRepository interface {
 	CreateSpendingGroup(ctx context.Context, newGroup group.SpendGroup, userCreatorId int) (int, error)
 	GetSpendingGroup(ctx context.Context, groupId int) (group.SpendGroup, error)
 	AppendMemberToGroup(ctx context.Context, groupId int, userId int) error
 	DeleteMemberFromGroup(ctx context.Context, groupId int, targetUserName string) error
+	DeleteSpendGroup(ctx context.Context, groupId int) error
 }
