@@ -17,7 +17,7 @@ depends_on = None
 
 def upgrade() -> None:
     op.create_table(
-        "group",
+        "spend_group",
         sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
         sa.Column("name", sa.String, nullable=False),
         sa.Column("description", sa.String)
@@ -27,7 +27,7 @@ def upgrade() -> None:
     op.create_foreign_key(
         None,
         "spend",
-        "group",
+        "spend_group",
         ["group_id"],
         ["id"]
     )
