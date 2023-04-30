@@ -20,13 +20,13 @@ type FinanceEntryPoint struct {
 }
 
 func (fe FinanceEntryPoint) FinanceEntrypoint() *http.ServeMux {
-	financeMux := http.NewServeMux()
+	//financeMux := http.NewServeMux()
 
 	spending := fe.spendingEntrypoint()
 
-	financeMux.Handle("/", http.StripPrefix("/spending", spending))
+	//financeMux.Handle("/", spending)
 
-	return financeMux
+	return spending
 }
 
 func (fe FinanceEntryPoint) spendingEntrypoint() *http.ServeMux {

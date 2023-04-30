@@ -57,7 +57,14 @@ func (pgr PostgresGroupRepository) GetSpendingGroup(ctx context.Context, groupId
 	return spendGroup, nil
 }
 
+func (pgr PostgresGroupRepository) AppendMemberToGroup(ctx context.Context, groupId int, userId int) error {
+	_, err := pgr.pool.Exec(ctx, "INSERT INTO group_member (user_id, group_id) values ($1, $2)", userId, groupId)
+
+	return err
+}
+
 type GroupRepository interface {
 	CreateSpendingGroup(ctx context.Context, newGroup group.SpendGroup, userCreatorId int) (int, error)
 	GetSpendingGroup(ctx context.Context, groupId int) (group.SpendGroup, error)
+	AppendMemberToGroup(ctx context.Context, groupId int, userId int) error
 }

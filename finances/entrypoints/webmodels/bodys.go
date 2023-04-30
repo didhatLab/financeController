@@ -26,3 +26,8 @@ type UpdateRequest struct {
 type GroupSpendRequest struct {
 	GroupId int `json:"group_id"`
 }
+
+type NewMemberRequest struct {
+	GroupId     int `json:"group_id"`
+	NewMemberId int `json:"new_member_id"`
+}

@@ -4,7 +4,9 @@ import (
 	"context"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"main/finances/entrypoints"
+	"main/finances/entrypoints/middleware"
 	"main/finances/repo"
+	"main/finances/services/group"
 	"main/finances/services/privacy"
 	"main/finances/services/spend"
 	"net/http"
@@ -30,5 +32,27 @@ func NewApplication(ctx context.Context, pool *pgxpool.Pool) (error, App) {
 		Ctx:                   ctx,
 	}
 
-	return nil, App{AppMux: finEntry.FinanceEntrypoint()}
+	groupEntry := entrypoints.GroupEntryPoint{
+		AddMemberService: group.NewAddGroupMemberService(groupRepo, groupAccessChecker),
+	}
+
+	commonEntry := http.NewServeMux()
+
+	commonEntry.Handle("/", http.StripPrefix("/spending", finEntry.FinanceEntrypoint()))
+	commonEntry.Handle("/member/add", middleware.AuthMiddleware(http.HandlerFunc(groupEntry.AddNewMember)))
+
+	return nil, App{AppMux: commonEntry}
+}
+
+func TestMux() *http.ServeMux {
+	ff := http.NewServeMux()
+	ff.HandleFunc("/test", check)
+	ff.HandleFunc("/rrr", check)
+
+	return ff
+}
+
+func check(w http.ResponseWriter, req *http.Request) {
+	w.WriteHeader(http.StatusCreated)
+	return
 }
