@@ -33,13 +33,15 @@ func NewApplication(ctx context.Context, pool *pgxpool.Pool) (error, App) {
 	}
 
 	groupEntry := entrypoints.GroupEntryPoint{
-		AddMemberService: group.NewAddGroupMemberService(groupRepo, groupAccessChecker),
+		AddMemberService:    group.NewAddGroupMemberService(groupRepo, groupAccessChecker),
+		DeleteMemberService: group.NewDeleteGroupMemberSrvice(groupRepo, groupAccessChecker),
 	}
 
 	commonEntry := http.NewServeMux()
 
 	commonEntry.Handle("/", http.StripPrefix("/spending", finEntry.FinanceEntrypoint()))
-	commonEntry.Handle("/member/add", middleware.AuthMiddleware(http.HandlerFunc(groupEntry.AddNewMember)))
+	commonEntry.Handle("group/member/add", middleware.AuthMiddleware(http.HandlerFunc(groupEntry.AddNewMember)))
+	commonEntry.Handle("group/member/delete", middleware.AuthMiddleware(http.HandlerFunc(groupEntry.DeleteMember)))
 
 	return nil, App{AppMux: commonEntry}
 }

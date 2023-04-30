@@ -8,7 +8,8 @@ import (
 )
 
 type GroupEntryPoint struct {
-	AddMemberService group.AddGroupMemberService
+	AddMemberService    group.AddGroupMemberService
+	DeleteMemberService group.DeleteGroupMemberService
 }
 
 func (gr GroupEntryPoint) GroupEntryPoint() *http.ServeMux {
@@ -51,6 +52,34 @@ func (gr GroupEntryPoint) AddNewMember(w http.ResponseWriter, req *http.Request)
 	}
 
 	w.WriteHeader(http.StatusCreated)
+	return
+}
+
+func (gr GroupEntryPoint) DeleteMember(w http.ResponseWriter, req *http.Request) {
+	var body webmodels.DeleteMemberRequest
+
+	ctx := req.Context()
+
+	realUser, ok := middleware.UserFromContext(ctx)
+	if !ok {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	err := webmodels.DecodeJSONBody(w, req, &body)
+
+	if err != nil {
+		webmodels.EncodeJSONResponseBody(w, http.StatusBadRequest, struct{ Err string }{Err: err.Error()})
+	}
+
+	err = gr.DeleteMemberService.DeleteGroupMember(ctx, body.GroupId, realUser.UserId, body.UsernameForDelete)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 	return
 
 }

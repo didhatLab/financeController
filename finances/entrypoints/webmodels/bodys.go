@@ -31,3 +31,13 @@ type NewMemberRequest struct {
 	GroupId     int `json:"group_id"`
 	NewMemberId int `json:"new_member_id"`
 }
+
+type DeleteMemberRequest struct {
+	GroupId           int    `json:"group_id"`
+	UsernameForDelete string `json:"username_for_delete"`
+}
+
+type CreateGroupRequest struct {
+	GroupName        string `json:"group_name"`
+	GroupDescription string `json:"group_description"`
+}
