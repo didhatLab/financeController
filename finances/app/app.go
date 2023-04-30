@@ -42,6 +42,7 @@ func NewApplication(ctx context.Context, pool *pgxpool.Pool) (error, App) {
 	commonEntry.Handle("/", http.StripPrefix("/spending", finEntry.FinanceEntrypoint()))
 	commonEntry.Handle("group/member/add", middleware.AuthMiddleware(http.HandlerFunc(groupEntry.AddNewMember)))
 	commonEntry.Handle("group/member/delete", middleware.AuthMiddleware(http.HandlerFunc(groupEntry.DeleteMember)))
+	commonEntry.Handle("group/create", middleware.AuthMiddleware(http.HandlerFunc(groupEntry.CreateNewSpendGroup)))
 
 	return nil, App{AppMux: commonEntry}
 }

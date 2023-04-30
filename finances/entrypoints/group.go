@@ -3,13 +3,15 @@ package entrypoints
 import (
 	"main/finances/entrypoints/middleware"
 	"main/finances/entrypoints/webmodels"
+	group2 "main/finances/models/group"
 	"main/finances/services/group"
 	"net/http"
 )
 
 type GroupEntryPoint struct {
-	AddMemberService    group.AddGroupMemberService
-	DeleteMemberService group.DeleteGroupMemberService
+	AddMemberService      group.AddGroupMemberService
+	DeleteMemberService   group.DeleteGroupMemberService
+	CreateSpendGroupServe group.CreateSpendGroupService
 }
 
 func (gr GroupEntryPoint) GroupEntryPoint() *http.ServeMux {
@@ -80,6 +82,37 @@ func (gr GroupEntryPoint) DeleteMember(w http.ResponseWriter, req *http.Request)
 	}
 
 	w.WriteHeader(http.StatusOK)
+	return
+}
+
+func (gr GroupEntryPoint) CreateNewSpendGroup(w http.ResponseWriter, req *http.Request) {
+	var body webmodels.CreateGroupRequest
+
+	ctx := req.Context()
+
+	realUser, ok := middleware.UserFromContext(ctx)
+
+	if !ok {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	err := webmodels.DecodeJSONBody(w, req, &body)
+
+	if err != nil {
+		webmodels.EncodeJSONResponseBody(w, http.StatusBadRequest, struct{ Err string }{Err: err.Error()})
+	}
+
+	groupId, err := gr.CreateSpendGroupServe.CreateSpendGroup(ctx, group2.SpendGroupFromReq(body), realUser.UserId)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	webmodels.EncodeJSONResponseBody(w, http.StatusCreated, struct {
+		GroupId int `json:"group_id"`
+	}{GroupId: groupId})
 	return
 
 }

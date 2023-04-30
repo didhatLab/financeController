@@ -19,7 +19,8 @@ func (pgr PostgresGroupRepository) CreateSpendingGroup(ctx context.Context, newG
 	var createdGroupId int
 
 	err := pgr.pool.QueryRow(ctx, "WITH created_group AS (INSERT INTO spend_group (name, description) values ($1, $2) RETURNING id"+
-		" INSERT INTO group_member (user_id, group_id) values ($3, (SELECT created_group.id FROM created_group))", newGroup.Name, newGroup.Description).Scan(&createdGroupId)
+		" INSERT INTO group_member (user_id, group_id) values ($3, (SELECT created_group.id FROM created_group))",
+		newGroup.Name, newGroup.Description).Scan(&createdGroupId)
 
 	return createdGroupId, err
 }
