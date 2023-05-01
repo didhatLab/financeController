@@ -7,7 +7,7 @@ import {RootStackParamList} from "./types/screen-types";
 import {HomeScreen} from "./screens/menu/spend/home";
 import {Provider as PaperProvider} from 'react-native-paper';
 import {SplashScreen} from "./screens/splash";
-import {DrawerNavigatorRoutes} from "./screens/menu/drawer-navigator-routes";
+import {DrawerNavigatorRoutes} from "./screens/drawer-navigator-routes";
 import {LoginScreen} from "./screens/auth/login";
 import RegisterScreen from "./screens/auth/register";
 import {NativeBaseProvider} from "native-base";
