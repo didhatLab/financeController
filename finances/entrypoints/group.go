@@ -13,20 +13,7 @@ type GroupEntryPoint struct {
 	DeleteMemberService     group.DeleteGroupMemberService
 	CreateSpendGroupServe   group.CreateSpendGroupService
 	DeleteSpendGroupService group.DeleteSpendGroupService
-}
-
-func (gr GroupEntryPoint) GroupEntryPoint() *http.ServeMux {
-	groupAction := gr.groupEntrypoint()
-	return groupAction
-
-}
-
-func (gr GroupEntryPoint) groupEntrypoint() *http.ServeMux {
-	groupMux := http.NewServeMux()
-
-	groupMux.Handle("/member/add", middleware.AuthMiddleware(http.HandlerFunc(gr.AddNewMember)))
-
-	return groupMux
+	GetUserGroupsService    group.GetGroupsService
 }
 
 func (gr GroupEntryPoint) AddNewMember(w http.ResponseWriter, req *http.Request) {
@@ -144,6 +131,30 @@ func (gr GroupEntryPoint) DeleteSpendGroup(w http.ResponseWriter, req *http.Requ
 	}
 
 	w.WriteHeader(http.StatusCreated)
+	return
+
+}
+
+func (gr GroupEntryPoint) GetUserGroups(w http.ResponseWriter, req *http.Request) {
+
+	ctx := req.Context()
+
+	realUser, ok := middleware.UserFromContext(ctx)
+
+	if !ok {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	groups, err := gr.GetUserGroupsService.GetUserGroups(ctx, realUser.UserId)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	webmodels.EncodeJSONResponseBody(w, http.StatusOK, groups)
+
 	return
 
 }

@@ -33,29 +33,21 @@ func NewApplication(ctx context.Context, pool *pgxpool.Pool) (error, App) {
 	}
 
 	groupEntry := entrypoints.GroupEntryPoint{
-		AddMemberService:    group.NewAddGroupMemberService(groupRepo, groupAccessChecker),
-		DeleteMemberService: group.NewDeleteGroupMemberSrvice(groupRepo, groupAccessChecker),
+		AddMemberService:        group.NewAddGroupMemberService(groupRepo, groupAccessChecker),
+		DeleteMemberService:     group.NewDeleteGroupMemberSrvice(groupRepo, groupAccessChecker),
+		CreateSpendGroupServe:   group.NewCreateSpendGroupService(groupRepo),
+		DeleteSpendGroupService: group.NewDeleteSpendGroupService(groupRepo, groupAccessChecker),
+		GetUserGroupsService:    group.NewGetGroupService(groupRepo),
 	}
 
 	commonEntry := http.NewServeMux()
 
 	commonEntry.Handle("/", http.StripPrefix("/spending", finEntry.FinanceEntrypoint()))
-	commonEntry.Handle("group/member/add", middleware.AuthMiddleware(http.HandlerFunc(groupEntry.AddNewMember)))
-	commonEntry.Handle("group/member/delete", middleware.AuthMiddleware(http.HandlerFunc(groupEntry.DeleteMember)))
-	commonEntry.Handle("group/create", middleware.AuthMiddleware(http.HandlerFunc(groupEntry.CreateNewSpendGroup)))
+	commonEntry.Handle("/group/member/add", middleware.AuthMiddleware(http.HandlerFunc(groupEntry.AddNewMember)))
+	commonEntry.Handle("/group/member/delete", middleware.AuthMiddleware(http.HandlerFunc(groupEntry.DeleteMember)))
+	commonEntry.Handle("/group/create", middleware.AuthMiddleware(http.HandlerFunc(groupEntry.CreateNewSpendGroup)))
+	commonEntry.Handle("/group/delete", middleware.AuthMiddleware(http.HandlerFunc(groupEntry.DeleteSpendGroup)))
+	commonEntry.Handle("/group/get", middleware.AuthMiddleware(http.HandlerFunc(groupEntry.GetUserGroups)))
 
 	return nil, App{AppMux: commonEntry}
-}
-
-func TestMux() *http.ServeMux {
-	ff := http.NewServeMux()
-	ff.HandleFunc("/test", check)
-	ff.HandleFunc("/rrr", check)
-
-	return ff
-}
-
-func check(w http.ResponseWriter, req *http.Request) {
-	w.WriteHeader(http.StatusCreated)
-	return
 }

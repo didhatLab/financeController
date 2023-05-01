@@ -78,10 +78,44 @@ func (pgr PostgresGroupRepository) DeleteSpendGroup(ctx context.Context, groupId
 	return err
 }
 
+func (pgr PostgresGroupRepository) GetUserGroups(ctx context.Context, userId int) ([]group.SpendGroup, error) {
+	groups := make([]group.SpendGroup, 0, 10)
+
+	sql := `SELECT target_user.group_id, sp.name, sp.description, member.user_id, a.username FROM (SELECT * FROM group_member WHERE user_id=$1) target_user
+    		JOIN spend_group sp ON sp.id = target_user.group_id
+			LEFT JOIN group_member member on sp.id = member.group_id JOIN auth a on member.user_id = a.user_id
+			ORDER BY target_user.group_id`
+
+	query, err := pgr.pool.Query(ctx, sql, userId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	prevGroupId := -1
+
+	for query.Next() {
+		var groupParams group.SpendGroup
+		var member group.Member
+
+		query.Scan(&groupParams.Id, &groupParams.Name, &groupParams.Description, &member.UserId, &member.Username)
+		member.IsAdmin = true
+		if groupParams.Id != prevGroupId {
+			prevGroupId = groupParams.Id
+			groups = append(groups, groupParams)
+		}
+		groups[len(groups)-1].Members = append(groups[len(groups)-1].Members, member)
+	}
+
+	return groups, nil
+
+}
+
 type GroupRepository interface {
 	CreateSpendingGroup(ctx context.Context, newGroup group.SpendGroup, userCreatorId int) (int, error)
 	GetSpendingGroup(ctx context.Context, groupId int) (group.SpendGroup, error)
 	AppendMemberToGroup(ctx context.Context, groupId int, userId int) error
 	DeleteMemberFromGroup(ctx context.Context, groupId int, targetUserName string) error
 	DeleteSpendGroup(ctx context.Context, groupId int) error
+	GetUserGroups(ctx context.Context, userId int) ([]group.SpendGroup, error)
 }
