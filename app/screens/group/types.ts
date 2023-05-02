@@ -8,6 +8,10 @@ export type GroupStackParams = {
     GroupList: {}
     GroupScreen: {group: SpendGroup}
     EditGroupSpend: {spend: Spending}
+    AddNewGroupSpend: {setGroupSpend: React.Dispatch<React.SetStateAction<Spending[]>>, groupId: number}
+    MembersList: {members: GroupMember[]}
+    Admin: {group: SpendGroup}
+    CreateGroup: {}
 }
 
 export type GroupPropsForRoute = NativeStackScreenProps<GroupStackParams, 'GroupList'>;
