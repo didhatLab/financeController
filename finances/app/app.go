@@ -9,6 +9,7 @@ import (
 	"main/finances/services/group"
 	"main/finances/services/privacy"
 	"main/finances/services/spend"
+	"main/finances/services/statistic"
 	"net/http"
 )
 
@@ -40,6 +41,10 @@ func NewApplication(ctx context.Context, pool *pgxpool.Pool) (error, App) {
 		GetUserGroupsService:    group.NewGetGroupService(groupRepo),
 	}
 
+	statEntryPoint := entrypoints.StatisticEntryPoint{
+		StatLoader: statistic.NewStatLoader(finRepo),
+	}
+
 	commonEntry := http.NewServeMux()
 
 	commonEntry.Handle("/", http.StripPrefix("/spending", finEntry.FinanceEntrypoint()))
@@ -48,6 +53,8 @@ func NewApplication(ctx context.Context, pool *pgxpool.Pool) (error, App) {
 	commonEntry.Handle("/group/create", middleware.AuthMiddleware(http.HandlerFunc(groupEntry.CreateNewSpendGroup)))
 	commonEntry.Handle("/group/delete", middleware.AuthMiddleware(http.HandlerFunc(groupEntry.DeleteSpendGroup)))
 	commonEntry.Handle("/group/get", middleware.AuthMiddleware(http.HandlerFunc(groupEntry.GetUserGroups)))
+
+	commonEntry.Handle("/stats/user", middleware.AuthMiddleware(http.HandlerFunc(statEntryPoint.LoadStatsForUser)))
 
 	return nil, App{AppMux: commonEntry}
 }
