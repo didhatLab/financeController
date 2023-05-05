@@ -36,7 +36,7 @@ func (er EventsResolver) StartResolve() {
 
 func (er EventsResolver) send2telegram(ctx context.Context, msg message.EventMessage) {
 	userIdsForTg := make([]int, 0, 10)
-
+	log.Print(msg)
 	for _, userId := range msg.UserIds {
 		status, err := er.Redis.Get(ctx, fmt.Sprintf("%d:userNotificationStatus", userId)).Result()
 		if err != nil {
