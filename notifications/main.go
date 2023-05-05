@@ -4,6 +4,7 @@ import (
 	"github.com/redis/go-redis/v9"
 	"main/finances/entrypoints/middleware"
 	"main/notifications/api"
+	"main/notifications/resolver"
 	"net/http"
 )
 
@@ -14,6 +15,12 @@ func main() {
 		Password: "",
 		DB:       0,
 	})
+
+	eventResolver := resolver.EventsResolver{Redis: rdb}
+
+	go func() {
+		eventResolver.StartResolve()
+	}()
 
 	entrypoint := api.NotificationAPI{Redis: rdb}
 
