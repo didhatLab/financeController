@@ -3,10 +3,12 @@ package app
 import (
 	"context"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/redis/go-redis/v9"
 	"main/finances/entrypoints"
 	"main/finances/entrypoints/middleware"
 	"main/finances/repo"
 	"main/finances/services/group"
+	"main/finances/services/notify"
 	"main/finances/services/privacy"
 	"main/finances/services/spend"
 	"main/finances/services/statistic"
@@ -19,8 +21,15 @@ type App struct {
 
 func NewApplication(ctx context.Context, pool *pgxpool.Pool) (error, App) {
 
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "",
+		DB:       0,
+	})
+
 	groupRepo := repo.NewPostgresGroupRepository(pool)
 	finRepo := repo.NewPostgresFinanceRepository(pool)
+	notifier := notify.NewNotifier(rdb)
 
 	groupAccessChecker := privacy.NewGroupAccessChecker(groupRepo)
 
@@ -34,10 +43,10 @@ func NewApplication(ctx context.Context, pool *pgxpool.Pool) (error, App) {
 	}
 
 	groupEntry := entrypoints.GroupEntryPoint{
-		AddMemberService:        group.NewAddGroupMemberService(groupRepo, groupAccessChecker),
-		DeleteMemberService:     group.NewDeleteGroupMemberSrvice(groupRepo, groupAccessChecker),
+		AddMemberService:        group.NewAddGroupMemberService(groupRepo, groupAccessChecker, notifier),
+		DeleteMemberService:     group.NewDeleteGroupMemberSrvice(groupRepo, groupAccessChecker, notifier),
 		CreateSpendGroupServe:   group.NewCreateSpendGroupService(groupRepo),
-		DeleteSpendGroupService: group.NewDeleteSpendGroupService(groupRepo, groupAccessChecker),
+		DeleteSpendGroupService: group.NewDeleteSpendGroupService(groupRepo, groupAccessChecker, notifier),
 		GetUserGroupsService:    group.NewGetGroupService(groupRepo),
 	}
 
