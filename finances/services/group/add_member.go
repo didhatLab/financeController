@@ -3,16 +3,19 @@ package group
 import (
 	"context"
 	"errors"
+	"log"
 	"main/finances/repo"
+	"main/finances/services/notify"
 	"main/finances/services/privacy"
 )
 
 type AddGroupMemberService struct {
 	groupRepository repo.GroupRepository
 	accessChecker   privacy.GroupAccessChecker
+	notifier        notify.Notifier
 }
 
-func NewAddGroupMemberService(groupRepo repo.GroupRepository, accessChecker privacy.GroupAccessChecker) AddGroupMemberService {
+func NewAddGroupMemberService(groupRepo repo.GroupRepository, accessChecker privacy.GroupAccessChecker, notifier notify.Notifier) AddGroupMemberService {
 	return AddGroupMemberService{groupRepository: groupRepo, accessChecker: accessChecker}
 }
 
@@ -28,5 +31,16 @@ func (ags AddGroupMemberService) AddMemberToGroup(ctx context.Context, adderUser
 
 	err = ags.groupRepository.AppendMemberToGroup(ctx, targetGroupId, targetUserId)
 
-	return err
+	if err != nil {
+		return err
+	}
+
+	err = ags.notifier.Notify(ctx, "you was added to group", []int{targetUserId})
+
+	if err != nil {
+		log.Print(err)
+		return err
+	}
+
+	return nil
 }

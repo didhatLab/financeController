@@ -43,7 +43,7 @@ func NewApplication(ctx context.Context, pool *pgxpool.Pool) (error, App) {
 	}
 
 	groupEntry := entrypoints.GroupEntryPoint{
-		AddMemberService:        group.NewAddGroupMemberService(groupRepo, groupAccessChecker),
+		AddMemberService:        group.NewAddGroupMemberService(groupRepo, groupAccessChecker, notifier),
 		DeleteMemberService:     group.NewDeleteGroupMemberSrvice(groupRepo, groupAccessChecker, notifier),
 		CreateSpendGroupServe:   group.NewCreateSpendGroupService(groupRepo),
 		DeleteSpendGroupService: group.NewDeleteSpendGroupService(groupRepo, groupAccessChecker, notifier),
