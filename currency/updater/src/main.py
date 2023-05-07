@@ -8,13 +8,16 @@ from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from scheduler import Scheduler
 
 from src.app.application import UpdaterCurrencyApplication
+from src.config import get_redis_config, get_mongo_config
 
 
 async def main():
-    client = AsyncIOMotorClient("localhost:27017")
-    db: AsyncIOMotorDatabase = client.get_database("currency")
+    mongo_config = get_mongo_config()
+    redis_config = get_redis_config()
+    client = AsyncIOMotorClient(mongo_config.uri)
+    db: AsyncIOMotorDatabase = client.get_database(mongo_config.db)
 
-    redis = aioredis.Redis()
+    redis = aioredis.Redis(host=redis_config.host, port=redis_config.port, db=redis_config.db, password=redis_config.db)
     session = aiohttp.ClientSession()
 
     app = UpdaterCurrencyApplication(db, redis, session)
@@ -28,6 +31,7 @@ async def main():
         schedule.exec_jobs()
         time.sleep(10)
 
+    # await redis.close()
 
 if __name__ == "__main__":
     asyncio.run(main())
