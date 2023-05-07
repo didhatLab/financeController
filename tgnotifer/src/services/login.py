@@ -29,4 +29,8 @@ async def save_account(redis: aioredis.Redis, chat_id: int, user_id: int, token:
         "token": token,
     }
 
-    await redis.set(str(chat_id), json.dumps(data))
+    await redis.set(f"{str(chat_id)}:chat", json.dumps(data))
+
+    data_for_user_id = {"chat_id": chat_id, "token": token}
+
+    await redis.set(f"{str(user_id)}:user", json.dumps(data_for_user_id))

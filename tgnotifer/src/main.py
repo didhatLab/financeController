@@ -7,6 +7,7 @@ from aiogram.fsm.storage.redis import RedisStorage
 from src.routes.start import start_route
 from src.routes.setting import notification_setting_route
 from src.routes.login import login_menu_router
+from src.consumer.main import consume
 
 
 async def main():
@@ -19,7 +20,7 @@ async def main():
     )
 
     bot = Bot("token")
-
+    asyncio.create_task(consume(redis, bot))
     await disp.start_polling(bot)
 
 
