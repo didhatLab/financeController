@@ -16,19 +16,19 @@ func NewAuthService(authRepo repo.AuthRepository, sign signatory.SignService) Au
 	return AuthService{authRepo: authRepo, signToken: sign}
 }
 
-func (as AuthService) AuthUser(ctx context.Context, username string, password string) (string, error) {
+func (as AuthService) AuthUser(ctx context.Context, username string, password string) (string, int, error) {
 	authUser, err := as.authRepo.GetUserDataByUserNameAndHash(ctx, username, password)
 
 	if err != nil {
-		return "", err
+		return "", -1, err
 	}
 	log.Printf("auth userId: %d", authUser.UserId)
 
 	token, err := as.signToken.SignToken(authUser.UserId)
 
 	if err != nil {
-		return "", err
+		return "", -1, err
 	}
 
-	return token, nil
+	return token, authUser.UserId, nil
 }
