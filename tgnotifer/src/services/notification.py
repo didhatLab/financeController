@@ -8,8 +8,8 @@ async def _set_notify_status(token: str, status: str):
         async with session.post(
             "http://localhost:4005/set",
             json={"Status": status},
-        ) as resp:
-            answer = await resp.json()
+        ):
+            pass
 
 
 async def turn_off_notify(redis: aioredis.Redis, chat_id: int):

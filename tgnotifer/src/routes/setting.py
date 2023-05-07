@@ -33,3 +33,5 @@ def notification_setting_route(redis: aioredis.Redis):
                 "unknown command, chose command from keyboard",
                 reply_markup=get_setting_keyboard(),
             )
+
+    return route

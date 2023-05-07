@@ -9,7 +9,7 @@ from src.services.login import login, save_account, LoginException
 from src.routes.keyboard import get_setting_keyboard
 
 
-def get_login_menu_router(redis: aioredis):
+def login_menu_router(redis: aioredis):
     login_router = Router()
 
     @login_router.message(StateFilter(LoginAccount.input_username))
@@ -18,6 +18,8 @@ def get_login_menu_router(redis: aioredis):
 
         await state.update_data(username=username)
         await state.set_state(LoginAccount.input_password)
+
+        await message.answer("input password")
 
     @login_router.message(StateFilter(LoginAccount.input_password))
     async def try_login(message: types.Message, state: FSMContext):
@@ -39,3 +41,5 @@ def get_login_menu_router(redis: aioredis):
             reply_markup=get_setting_keyboard(),
         )
         await state.set_state(SettingState.menu_setting)
+
+    return login_router

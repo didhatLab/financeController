@@ -23,3 +23,5 @@ def start_route():
         await message.answer("Input login for your account")
 
         await state.set_state(LoginAccount.input_username)
+
+    return router

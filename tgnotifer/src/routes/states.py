@@ -1,14 +1,14 @@
 from aiogram.fsm.state import State, StatesGroup
 
 
-class LoginAccount(State):
+class LoginAccount(StatesGroup):
     input_username = State()
     input_password = State()
 
 
-class SettingState(State):
+class SettingState(StatesGroup):
     menu_setting = State()
 
 
-class UnlinkState(State):
+class UnlinkState(StatesGroup):
     unlink = State()
