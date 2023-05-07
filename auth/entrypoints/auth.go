@@ -54,12 +54,15 @@ func (ap AuthEntryPoint) getTokenForUser(w http.ResponseWriter, req *http.Reques
 		return
 	}
 
-	token, err := ap.AuthService.AuthUser(ap.Ctx, userForAuth.Username, userForAuth.Password)
+	token, userId, err := ap.AuthService.AuthUser(ap.Ctx, userForAuth.Username, userForAuth.Password)
 
 	if err != nil {
 		decoder.EncodeJSONResponseBody(w, http.StatusBadRequest, struct{}{})
 		return
 	}
-	decoder.EncodeJSONResponseBody(w, http.StatusOK, struct{ Token string }{Token: token})
+	decoder.EncodeJSONResponseBody(w, http.StatusOK, struct {
+		Token  string
+		UserId int
+	}{Token: token, UserId: userId})
 
 }
