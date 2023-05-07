@@ -6,6 +6,7 @@ from aiogram.fsm.context import FSMContext
 
 from src.routes.states import LoginAccount, SettingState
 from src.services.login import login, save_account, LoginException
+from src.routes.keyboard import get_setting_keyboard
 
 
 def get_login_menu_router(redis: aioredis):
@@ -33,5 +34,8 @@ def get_login_menu_router(redis: aioredis):
 
         await save_account(redis, message.chat.id, user_id, token)
 
-        await message.answer("Account linked, you can set notification settings now!")
+        await message.answer(
+            "Account linked, you can set notification settings now!",
+            reply_markup=get_setting_keyboard(),
+        )
         await state.set_state(SettingState.menu_setting)

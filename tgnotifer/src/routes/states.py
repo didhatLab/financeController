@@ -8,3 +8,7 @@ class LoginAccount(State):
 
 class SettingState(State):
     menu_setting = State()
+
+
+class UnlinkState(State):
+    unlink = State()
