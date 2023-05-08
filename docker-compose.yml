@@ -1,6 +1,6 @@
 version: '2'
 services:
-  db:
+  postgres:
     image: postgres:14.1-alpine
     restart: always
     environment:
@@ -8,3 +8,15 @@ services:
       - POSTGRES_PASSWORD=postgres
     ports:
       - '5432:5432'
+  mongodb:
+    image: mongo:6-jammy
+    ports:
+      - '27017:27017'
+    volumes:
+      - dbdata6:/data/db
+  redis:
+    image: redis:6.2-alpine
+    ports:
+      - '6379:6379'
+    volumes:
+      - cache:/data
