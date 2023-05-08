@@ -1,5 +1,4 @@
 import asyncio
-from typing import List
 
 import aiohttp
 from fastapi import FastAPI, Depends
@@ -8,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.auth import auth_header_token
 from src.models.infalte import InflateUIData
 from src.models.spend import Spending, CurrencyRate
+from src.config import get_spend_url, get_currency_url
 
 
 app = FastAPI()
@@ -36,14 +36,14 @@ async def inflate_ui_for_app(
 
 
 async def get_spends(session: aiohttp.ClientSession, headers: dict) -> list[Spending]:
-    async with session.post("http://127.0.0.1:4000/spending/get", headers=headers) as r:
+    async with session.post(f"{get_spend_url()}/spending/get", headers=headers) as r:
         spends = await r.json()
 
     return [Spending(**sp) for sp in spends]
 
 
 async def get_currency_rate(session: aiohttp.ClientSession) -> CurrencyRate:
-    async with session.get("http://127.0.0.1:4002/current_currency_rate") as r:
+    async with session.get(f"{get_currency_url()}/current_currency_rate") as r:
         rate = await r.json()
 
     return CurrencyRate(**rate)

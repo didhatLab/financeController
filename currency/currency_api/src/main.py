@@ -4,13 +4,20 @@ import redis.asyncio as aioredis
 from fastapi import FastAPI, Depends
 
 from src.models.rate import CurrencyRate, RateForStats
+from src.config import get_redis_config, get_startup_config
 
 
 app = FastAPI()
 
 
 async def get_redis() -> aioredis.Redis:
-    redis = aioredis.Redis()
+    redis_config = get_redis_config()
+    redis = aioredis.Redis(
+        host=redis_config.host,
+        port=redis_config.port,
+        db=redis_config.db,
+        password=redis_config.password,
+    )
     yield redis
     await redis.close()
 
@@ -43,4 +50,4 @@ key_for_current_rate_from_redis = "current_currency_rate"
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, port=4002)
+    uvicorn.run(app, port=get_startup_config())

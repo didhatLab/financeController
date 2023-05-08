@@ -7,9 +7,8 @@ import (
 	"log"
 	"main/finances/models/user"
 	"net/http"
+	"os"
 )
-
-const secretKey = "secretKey"
 
 func AuthMiddleware(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
@@ -49,6 +48,7 @@ func extractUserId(req *http.Request) (int, error) {
 }
 
 func validateToken(token string) (jwt.MapClaims, bool) {
+	secretKey := os.Getenv("SECRET_KEY")
 	parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
