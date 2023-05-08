@@ -8,6 +8,7 @@ import (
 	"main/auth/services"
 	"main/auth/signatory"
 	"net/http"
+	"os"
 )
 
 type App struct {
@@ -15,7 +16,7 @@ type App struct {
 }
 
 func NewApplication(ctx context.Context, pool *pgxpool.Pool) (App, error) {
-	secretKey := "secretKey"
+	secretKey := os.Getenv("SECRET_KEY")
 
 	authRepo := repo.NewAuthRepository(pool)
 
