@@ -20,3 +20,50 @@ services:
       - '6379:6379'
     volumes:
       - cache:/data
+
+  telegram-notifier:
+    build: tgnotifer
+    network_mode: host
+
+  resolver:
+    build:
+      context: .
+      dockerfile: notifications.dockerfile
+    network_mode: host
+    ports:
+      - '4005:4005'
+  finances:
+    build:
+      context: .
+      dockerfile: finances.dockerfile
+    network_mode: host
+    ports:
+      - '4000:4000'
+  auth:
+    build:
+      context: .
+      dockerfile: auth.dockerfile
+    network_mode: host
+    ports:
+      - '4001:4001'
+  back2front:
+    build: back2front
+    network_mode: host
+    ports:
+      - '4003:4003'
+  currency:
+    build: currency/currency_api
+    network_mode: host
+    ports:
+      - '4002:4002'
+  currency_updatrer:
+    build: currency/updater
+    network_mode: host
+
+
+
+volumes:
+  dbdata6:
+  cache:
+
+

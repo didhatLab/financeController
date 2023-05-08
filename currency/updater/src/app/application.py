@@ -6,6 +6,7 @@ from src.api.openexchanger import OpenExchangerApi
 from src.adapter.history_currency import CurrencyHistoryRepositoryImp
 from src.adapter.current_currency import CurrentCurrencyRatesRepositoryImp
 from src.services.currency_updater import CurrencyUpdater
+from src.config import get_exchange_id
 
 
 class UpdaterCurrencyApplication:
@@ -20,7 +21,7 @@ class UpdaterCurrencyApplication:
         self._api_session = session
 
     def build(self):
-        client_id = "b7c4832eed6e43e691fb217e25a58abf"
+        client_id = get_exchange_id()
 
         currency_api = OpenExchangerApi(session=self._api_session, client_id=client_id)
 
@@ -36,5 +37,3 @@ class UpdaterCurrencyApplication:
         )
 
         return currency_updater_service
-
-

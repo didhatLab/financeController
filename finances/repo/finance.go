@@ -65,7 +65,7 @@ func (pfr PostgresFinanceRepository) UpdateFinanceSpending(ctx context.Context, 
 
 	_, err := pfr.pool.Exec(ctx, "UPDATE spend "+
 		"SET name=COALESCE($1, name), type=COALESCE($2, type), amount=COALESCE($3, amount), description=COALESCE($4, description)"+
-		" WHERE id=$5 AND user_id=$6 ADN group_id=$7", request.Name, request.Type, request.Amount, request.Description, request.SpendId, userId, request.GroupId)
+		" WHERE id=$5 AND user_id=$6 AND group_id=$7", request.Name, request.Type, request.Amount, request.Description, request.SpendId, userId, request.GroupId)
 
 	if err != nil {
 		log.Println(err)
