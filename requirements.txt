@@ -1,0 +1,7 @@
+alembic==1.10.3
+greenlet==2.0.2
+Mako==1.2.4
+MarkupSafe==2.1.2
+psycopg2==2.9.6
+SQLAlchemy==2.0.9
+typing_extensions==4.5.0
