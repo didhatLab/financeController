@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
+	"log"
 	"main/finances/entrypoints"
 	"main/finances/entrypoints/middleware"
 	"main/finances/repo"
@@ -13,6 +14,8 @@ import (
 	"main/finances/services/spend"
 	"main/finances/services/statistic"
 	"net/http"
+	"os"
+	"strconv"
 )
 
 type App struct {
@@ -21,10 +24,16 @@ type App struct {
 
 func NewApplication(ctx context.Context, pool *pgxpool.Pool) (error, App) {
 
+	db, err := strconv.Atoi(os.Getenv("REDIS_DB"))
+
+	if err != nil {
+		log.Print(err)
+	}
+
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "",
-		DB:       0,
+		Addr:     os.Getenv("REDIS_ADDR"),
+		Password: os.Getenv("REDIS_PASSWORD"),
+		DB:       db,
 	})
 
 	groupRepo := repo.NewPostgresGroupRepository(pool)
