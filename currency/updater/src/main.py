@@ -5,10 +5,14 @@ import time
 import aiohttp
 import redis.asyncio as aioredis
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
-from scheduler import Scheduler
+from scheduler.asyncio import Scheduler
 
 from src.app.application import UpdaterCurrencyApplication
 from src.config import get_redis_config, get_mongo_config
+
+
+async def foo():
+    pass
 
 
 async def main():
@@ -17,21 +21,24 @@ async def main():
     client = AsyncIOMotorClient(mongo_config.uri)
     db: AsyncIOMotorDatabase = client.get_database(mongo_config.db)
 
-    redis = aioredis.Redis(host=redis_config.host, port=redis_config.port, db=redis_config.db)
+    redis = aioredis.Redis(
+        host=redis_config.host, port=redis_config.port, db=redis_config.db
+    )
     session = aiohttp.ClientSession()
 
     app = UpdaterCurrencyApplication(db, redis, session)
 
     service_for_run = app.build()
-    schedule = Scheduler()
-    await service_for_run.update_currencies()
-    schedule.cyclic(dt.timedelta(hours=1), service_for_run.update_currencies)
 
+    async def run() -> None:
+        await service_for_run.update_currencies()
+        return
+
+    await run()
     while True:
-        schedule.exec_jobs()
-        time.sleep(10)
+        await asyncio.sleep(1000)
+        await run()
 
-    # await redis.close()
 
 if __name__ == "__main__":
     asyncio.run(main())
