@@ -36,7 +36,7 @@ async def main():
 
     await run()
     while True:
-        await asyncio.sleep(1000)
+        await asyncio.sleep(10000)
         await run()
 
 

@@ -46,7 +46,19 @@ services:
     network_mode: host
     ports:
       - '4001:4001'
-
+  back2front:
+    build: back2front
+    network_mode: host
+    ports:
+      - '4003:4003'
+  currency:
+    build: currency/currency_api
+    network_mode: host
+    ports:
+      - '4002:4002'
+  currency_updatrer:
+    build: currency/updater
+    network_mode: host
 
 
 
