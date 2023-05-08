@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 import redis.asyncio as aioredis
 from aiogram import Bot, Dispatcher
@@ -10,10 +11,11 @@ from src.routes.login import login_menu_router
 from src.consumer.main import consume
 from src.config import get_bot_token, get_redis_config
 
+logger = logging.getLogger(__name__)
+
 
 async def main():
     redis_config = get_redis_config()
-
     redis = aioredis.Redis(
         host=redis_config.host,
         port=redis_config.port,

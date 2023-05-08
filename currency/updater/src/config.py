@@ -29,11 +29,11 @@ class MongoConfig:
     db: str
 
 
-redis_config = RedisConfig(
-    host=redis_host, port=redis_port, db=redis_db, password=redis_password
-)
+redis_config = RedisConfig(host=redis_host, port=redis_port, db=redis_db, password=None)
 
 mongo_config = MongoConfig(uri=mongo_uri, db=mongo_db)
+
+exchange_client_id = os.environ.get("EXCHANGE_API_CLIENT_ID")
 
 
 def get_redis_config():
@@ -42,3 +42,7 @@ def get_redis_config():
 
 def get_mongo_config():
     return mongo_config
+
+
+def get_exchange_id():
+    return exchange_client_id

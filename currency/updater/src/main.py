@@ -17,7 +17,7 @@ async def main():
     client = AsyncIOMotorClient(mongo_config.uri)
     db: AsyncIOMotorDatabase = client.get_database(mongo_config.db)
 
-    redis = aioredis.Redis(host=redis_config.host, port=redis_config.port, db=redis_config.db, password=redis_config.db)
+    redis = aioredis.Redis(host=redis_config.host, port=redis_config.port, db=redis_config.db)
     session = aiohttp.ClientSession()
 
     app = UpdaterCurrencyApplication(db, redis, session)
